@@ -2,31 +2,97 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Webpage Tasks Showcase</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks Showcase</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; text-align: center; }
-    .grid { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem; }
-    .card {
-      padding: 1.5rem 2.5rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      text-decoration: none;
-      color: #333;
-      font-weight: bold;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-    .card:hover { background-color: #f0f0f0; }
+
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      width: 240px;
+    }
+
+    .author-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #888888; /* Subtle gray so it doesn't distract from buttons */
+    }
+
+    .author-tag span {
+      color: #ffffff;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .btn {
+      display: block;
+      padding: 0.75rem 1rem;
+      background-color: #ffffff;
+      color: #000000;
+      text-decoration: none;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 9999px;
+      border: 1px solid #ffffff;
+      transition: all 0.2s ease;
+      opacity: 0;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .btn:nth-child(1) { animation-delay: 0.05s; }
+    .btn:nth-child(2) { animation-delay: 0.10s; }
+    .btn:nth-child(3) { animation-delay: 0.15s; }
+    .btn:nth-child(4) { animation-delay: 0.20s; }
+    .btn:nth-child(5) { animation-delay: 0.25s; }
+
+    .btn:hover {
+      background-color: #000000;
+      color: #ffffff;
+      transform: scale(1.02);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
-  <h1>My Web Development Tasks</h1>
-  <p>Select a task to view the webpage:</p>
 
-  <div class="grid">
-    <a href="task1.html" class="card">Task 1</a>
-    <a href="task2.html" class="card">Task 2</a>
-    <a href="task3.html" class="card">Task 3</a>
-    <a href="task4.html" class="card">Task 4</a>
-    <a href="task5.html" class="card">Task 5</a>
+  <div class="card">
+    <div class="author-tag">Made by <span>Sharavan Raj</span></div>
+
+    <div class="container">
+      <a href="task1.html" class="btn">Task 1</a>
+      <a href="task2.html" class="btn">Task 2</a>
+
+    </div>
   </div>
+
 </body>
 </html>
