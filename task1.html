@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Input Flow</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column; /* Allows back-link to stay at top while content centers */
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f0f0f0;
+      margin: 0;
+      position: relative;
+    }
+
+    /* Back Link Styling */
+    .back-link {
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      background: #fff;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .back-link:hover {
+      background: #e0e0e0;
+    }
+
+    /* Window Container */
+    .window {
+      width: 400px;
+      border: 2px solid #333;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .window-body {
+      padding: 20px;
+    }
+
+    /* Input Controls */
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      color: rgb(254, 4, 221);
+      font-weight: bold;
+      font-size: 18px;
+      margin-right: 10px;
+    }
+
+    input[type="number"] {
+      border: 2px solid black;
+      padding: 6px 10px;
+      font-size: 16px;
+      width: 150px;
+      outline: none;
+    }
+
+    .btn-red {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    /* Message Box */
+    .message-box {
+      border: 2px solid #333;
+      padding: 15px;
+      display: none;
+      position: relative;
+      background-color: #fafafa;
+    }
+
+    .message-box p {
+      margin: 0 0 15px 0;
+      font-size: 16px;
+    }
+
+    .btn-ok {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      cursor: pointer;
+      float: right;
+    }
+
+    /* Output Section */
+    .output-section {
+      text-align: center;
+    }
+
+    .output-number {
+      color: red;
+      font-weight: bold;
+      font-size: 48px;
+      margin-top: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ADDED BACK-TO-TASK-LIST LINK HERE -->
+  <a href="index.html" class="back-link">&larr; Back to Task List</a>
+
+  <!-- PAGE 1: Input Window -->
+  <div id="page1" class="window">
+
+    <div class="window-body">
+
+      <div class="input-group">
+        <label for="userNum">Number:</label>
+        <input
+          type="number"
+          id="userNum"
+          placeholder="Enter number"
+        >
+      </div>
+
+      <button class="btn-red" onclick="showMessageBox()">
+        Click
+      </button>
+
+      <!-- Message Box -->
+      <div id="msgBox" class="message-box">
+        <p id="msgText"></p>
+
+        <button class="btn-ok" onclick="openOutputPage()">
+          OK
+        </button>
+
+        <div style="clear: both;"></div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- PAGE 2: Output Window -->
+  <div id="page2" class="window hidden">
+
+    <div class="window-body output-section">
+
+      <h2>Entered Number</h2>
+
+      <div id="displayNum" class="output-number"></div>
+
+    </div>
+  </div>
+
+
+  <script>
+    let enteredValue = '';
+
+    function showMessageBox() {
+      const inputField = document.getElementById('userNum');
+      enteredValue = inputField.value;
+
+      if (enteredValue === '') {
+        alert('Please enter a number first!');
+        return;
+      }
+
+      document.getElementById('msgText').innerText =
+        'We are entering number ' + enteredValue;
+
+      document.getElementById('msgBox').style.display = 'block';
+    }
+
+    function openOutputPage() {
+      document.getElementById('page1').classList.add('hidden');
+      document.getElementById('page2').classList.remove('hidden');
+
+      document.getElementById('displayNum').innerText = enteredValue;
+    }
+  </script>
+
+</body>
+</html>
