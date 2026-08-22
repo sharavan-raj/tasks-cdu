@@ -13,31 +13,11 @@
 
     body {
       display: flex;
-      flex-direction: column; /* Allows back-link to stay at top while content centers */
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       background-color: #f0f0f0;
       margin: 0;
-      position: relative;
-    }
-
-    /* Back Link Styling */
-    .back-link {
-      position: absolute;
-      top: 15px;
-      left: 20px;
-      text-decoration: none;
-      color: #333;
-      font-weight: bold;
-      background: #fff;
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    .back-link:hover {
-      background: #e0e0e0;
     }
 
     /* Window Container */
@@ -127,9 +107,6 @@
 </head>
 
 <body>
-
-  <!-- ADDED BACK-TO-TASK-LIST LINK HERE -->
-  <a href="index.html" class="back-link">&larr; Back to Task List</a>
 
   <!-- PAGE 1: Input Window -->
   <div id="page1" class="window">
