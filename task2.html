@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+    }
+
+    /* ========== COMMON ========== */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .form-body { padding: 30px; }
+
+    .form-group { margin-bottom: 20px; position: relative; }
+
+    .form-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .required { color: #e53935; }
+
+    .input-wrapper { position: relative; }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 13px 16px 13px 44px;
+      border: 1.5px solid #d0d7de;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.25s ease;
+      outline: none;
+      background: #fafbfc;
+    }
+
+    .input-wrapper input:focus {
+      border-color: #1a73e8;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+    }
+
+    .input-wrapper .field-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: #5f6b7a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input-wrapper .field-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .input-wrapper .toggle-password {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+      color: #5f6b7a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input-wrapper .toggle-password svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .error-msg {
+      color: #e53935;
+      font-size: 12.5px;
+      margin-top: 6px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    .success-msg {
+      color: #2e7d32;
+      font-size: 12.5px;
+      margin-top: 6px;
+      display: none;
+    }
+    .success-msg.show { display: block; }
+
+    input.error {
+      border-color: #e53935 !important;
+      background: #fff5f5;
+    }
+    input.valid { border-color: #2e7d32 !important; }
+
+    .global-error {
+      background: #ffebee;
+      border: 1px solid #ef9a9a;
+      color: #c62828;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+    .global-error.show { display: block; }
+
+    .divider {
+      text-align: center;
+      margin: 24px 0 16px;
+      position: relative;
+      color: #999;
+      font-size: 13px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 42%;
+      height: 1px;
+      background: #e0e0e0;
+    }
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+
+    .link-text {
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+    }
+    .link-text a {
+      color: #1a73e8;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .link-text a:hover { text-decoration: underline; }
+
+    /* ========== REGISTRATION HEADER ========== */
+    .reg-header {
+      background: linear-gradient(135deg, #1a73e8, #0d47a1);
+      color: white;
+      padding: 28px 30px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .reg-header .header-icon {
+      width: 52px;
+      height: 52px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .reg-header .header-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
+    }
+    .reg-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .reg-header p { font-size: 14px; opacity: 0.9; }
+
+/* ========== PROFILE PHOTO UPLOAD ========== */
+.profile-photo-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 28px;
+  width: 100%;
+}
+
+.avatar-upload {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.avatar-preview {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 3px solid #1a73e8;
+  background: #e3f2fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+  margin: 0 auto;
+}
+
+.avatar-preview:hover {
+  border-color: #0d47a1;
+  transform: scale(1.03);
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 48px;
+  height: 48px;
+  color: #1a73e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-placeholder svg {
+  width: 48px;
+  height: 48px;
+  fill: currentColor;
+}
+
+.avatar-upload input[type="file"] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.upload-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 32px;
+  height: 32px;
+  background: #1a73e8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border: 2px solid white;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.upload-badge svg {
+  width: 16px;
+  height: 16px;
+  fill: white;
+}
+
+.photo-hint {
+  text-align: center;
+  font-size: 13px;
+  color: #666;
+  margin-top: 10px;
+  width: 100%;
+}
+    }
+
+    /* Date row */
+    .date-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .date-row .form-group { margin-bottom: 8px; }
+
+    /* DOB Hint */
+    .dob-hint {
+      background: #fff5f5;
+      border: 1px solid #ffcdd2;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 10px;
+      font-size: 13px;
+      display: none;
+    }
+    .dob-hint.show { display: block; }
+    .dob-hint .title { color: #c62828; font-weight: 600; margin-bottom: 6px; }
+    .dob-hint ul { list-style: none; padding-left: 0; }
+    .dob-hint li { margin: 4px 0; color: #555; }
+    .dob-hint li.valid { color: #2e7d32; }
+    .dob-hint li.invalid { color: #c62828; }
+
+    .info-box {
+      background: #e3f2fd;
+      border: 1px solid #90caf9;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 12px 0 20px;
+      font-size: 13px;
+      color: #1565c0;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .info-box svg {
+      width: 18px;
+      height: 18px;
+      fill: #1565c0;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .age-display {
+      font-size: 13px;
+      color: #2e7d32;
+      margin-top: 6px;
+      font-weight: 500;
+      display: none;
+    }
+    .age-display.show { display: block; }
+
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 22px 0;
+      font-size: 14px;
+      color: #444;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: #1a73e8;
+      cursor: pointer;
+    }
+    .checkbox-group a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #1a73e8, #0d47a1);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(26, 115, 232, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(26, 115, 232, 0.45);
+    }
+    .btn-primary svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    /* ========== LOGIN HEADER ========== */
+    .login-header {
+      background: linear-gradient(135deg, #1a73e8, #0d47a1);
+      color: white;
+      padding: 36px 30px;
+      text-align: center;
+    }
+    .login-header .header-icon {
+      width: 64px;
+      height: 64px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .login-header .header-icon svg {
+      width: 32px;
+      height: 32px;
+      fill: white;
+    }
+    .login-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .login-header p { font-size: 14px; opacity: 0.9; }
+
+    /* ========== DETAILS (SUCCESS) ========== */
+    .success-header {
+      background: linear-gradient(135deg, #2e7d32, #1b5e20);
+      color: white;
+      padding: 36px 30px 50px;
+      text-align: center;
+      position: relative;
+    }
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    .success-icon svg {
+      width: 36px;
+      height: 36px;
+      fill: #2e7d32;
+    }
+    .success-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+    .success-header p { font-size: 14px; opacity: 0.95; }
+
+    /* Profile photo on details page */
+    .details-avatar-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: -45px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 5;
+    }
+    .details-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid white;
+      background: #e3f2fd;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .details-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .details-avatar .placeholder {
+      width: 42px;
+      height: 42px;
+      color: #1a73e8;
+    }
+    .details-avatar .placeholder svg {
+      width: 42px;
+      height: 42px;
+      fill: currentColor;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a237e;
+      margin-bottom: 18px;
+    }
+    .section-title svg {
+      width: 20px;
+      height: 20px;
+      fill: #1a237e;
+    }
+
+    .details-card {
+      border: 1px solid #e0e7ff;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+
+    .detail-row {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f4f8;
+      gap: 14px;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row:nth-child(even) { background: #fafbff; }
+
+    .detail-icon {
+      width: 36px;
+      height: 36px;
+      background: #e8eaf6;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #3f51b5;
+    }
+    .detail-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .detail-label {
+      flex: 1;
+      font-size: 13.5px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .detail-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #222;
+      text-align: right;
+    }
+
+    .status-badge {
+      background: #e8f5e9;
+      color: #2e7d32;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .status-badge svg {
+      width: 14px;
+      height: 14px;
+      fill: #2e7d32;
+    }
+
+    .info-note {
+      background: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #2e7d32;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .info-note svg {
+      width: 18px;
+      height: 18px;
+      fill: #2e7d32;
+      flex-shrink: 0;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn-home {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #2e7d32, #1b5e20);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(46, 125, 50, 0.3);
+    }
+    .btn-home:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(46, 125, 50, 0.4);
+    }
+    .btn-home svg {
+      width: 18px;
+      height: 18px;
+      fill: white;
+    }
+
+    .btn-print {
+      width: 100%;
+      padding: 14px;
+      background: white;
+      color: #333;
+      border: 1.5px solid #cfd8dc;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+    .btn-print:hover {
+      background: #f5f5f5;
+      border-color: #90a4ae;
+    }
+    .btn-print svg {
+      width: 18px;
+      height: 18px;
+      fill: #333;
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .btn-group { display: none !important; }
+      .container { box-shadow: none; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ==================== REGISTRATION VIEW ==================== -->
+    <div id="registrationView" class="view active">
+      <div class="reg-header">
+        <div class="header-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <div>
+          <h1>CREATE YOUR ACCOUNT</h1>
+          <p>Fill in your details to register</p>
+        </div>
+      </div>
+
+      <div class="form-body">
+        <div class="global-error" id="regGlobalError"></div>
+
+<!-- PROFILE PHOTO UPLOAD -->
+<div class="profile-photo-section">
+  <div style="text-align: center;">
+    <div class="avatar-upload" title="Click to upload photo">
+      <div class="avatar-preview" id="avatarPreview">
+        <div class="avatar-placeholder" id="avatarPlaceholder">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+        <img id="avatarImg" style="display:none;" alt="Profile">
+      </div>
+      <input type="file" id="profilePhoto" accept="image/*">
+      <div class="upload-badge">
+        <svg viewBox="0 0 24 24"><path d="M12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+      </div>
+    </div>
+    <div class="photo-hint">Click to upload profile photo</div>
+  </div>
+</div>
+
+        <form id="registrationForm" novalidate>
+          <!-- Full Name -->
+          <div class="form-group">
+            <label>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#333"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              Full Name <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="field-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              </span>
+              <input type="text" id="fullName" placeholder="Enter your full name" autocomplete="name">
+            </div>
+            <div class="error-msg" id="fullNameError"></div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#333"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              Email Address <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="field-icon">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              </span>
+              <input type="email" id="email" placeholder="Enter your email address" autocomplete="email">
+            </div>
+            <div class="error-msg" id="emailError"></div>
+          </div>
+
+          <!-- Mobile -->
+          <div class="form-group">
+            <label>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#333"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+              Mobile Number <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="field-icon">
+                <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+              </span>
+              <input type="tel" id="mobile" placeholder="Enter your 10 digit mobile number" maxlength="10" autocomplete="tel">
+            </div>
+            <div class="error-msg" id="mobileError"></div>
+          </div>
+
+          <!-- Date of Birth -->
+          <div class="form-group">
+            <label>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#333"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+              Date of Birth <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="field-icon">
+                <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+              </span>
+              <input type="date" id="dob">
+            </div>
+            <div class="error-msg" id="dobError"></div>
+            <div class="age-display" id="ageDisplay"></div>
+            <div class="dob-hint" id="dobHint">
+              <div class="title">Date of Birth should be:</div>
+              <ul>
+                <li id="hintValidDate">✓ A valid date</li>
+                <li id="hintAge18">✓ You must be at least 18 years old</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Registration Dates -->
+          <div class="date-row">
+            <div class="form-group">
+              <label>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#333"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                Start Date <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <span class="field-icon">
+                  <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                </span>
+                <input type="date" id="startDate">
+              </div>
+              <div class="error-msg" id="startDateError"></div>
+              <div class="success-msg" id="startDateSuccess">Start date is valid.</div>
+            </div>
+
+            <div class="form-group">
+              <label>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#333"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                End Date <span class="required">*</span>
+              </label>
+              <div class="input-wrapper">
+                <span class="field-icon">
+                  <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                </span>
+                <input type="date" id="endDate">
+              </div>
+              <div class="error-msg" id="endDateError"></div>
+              <div class="success-msg" id="endDateSuccess">End date is valid.</div>
+            </div>
+          </div>
+
+          <div class="info-box">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <div><strong>Registration Date Validation:</strong><br>Start date must be before the end date.</div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#333"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              Password <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="field-icon">
+                <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              </span>
+              <input type="password" id="password" placeholder="Create a password" autocomplete="new-password">
+              <span class="toggle-password" onclick="togglePassword('password', this)">
+                <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </span>
+            </div>
+            <div class="error-msg" id="passwordError"></div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group">
+            <label>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#333"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              Confirm Password <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <span class="field-icon">
+                <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              </span>
+              <input type="password" id="confirmPassword" placeholder="Confirm your password" autocomplete="new-password">
+              <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">
+                <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </span>
+            </div>
+            <div class="error-msg" id="confirmPasswordError"></div>
+          </div>
+
+          <!-- Terms -->
+          <div class="checkbox-group">
+            <input type="checkbox" id="terms">
+            <label for="terms">
+              I agree to the <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>
+            </label>
+          </div>
+          <div class="error-msg" id="termsError" style="margin-top:-12px; margin-bottom:16px;"></div>
+
+          <button type="submit" class="btn-primary">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            SIGN UP
+          </button>
+        </form>
+
+        <div class="divider">OR</div>
+        <div class="link-text">
+          Already have an account? <a onclick="showView('login')">Login</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== LOGIN VIEW ==================== -->
+    <div id="loginView" class="view">
+      <div class="login-header">
+        <div class="header-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+        </div>
+        <h1>Welcome Back</h1>
+        <p>Login to your account</p>
+      </div>
+
+      <div class="form-body">
+        <form id="loginForm" novalidate>
+          <div class="form-group">
+            <label>Email or Mobile Number</label>
+            <div class="input-wrapper">
+              <span class="field-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              </span>
+              <input type="text" id="loginId" placeholder="Enter email or 10-digit mobile" autocomplete="username">
+            </div>
+            <div class="error-msg" id="loginIdError"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <div class="input-wrapper">
+              <span class="field-icon">
+                <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              </span>
+              <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password">
+              <span class="toggle-password" onclick="togglePassword('loginPassword', this)">
+                <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </span>
+            </div>
+            <div class="error-msg" id="loginPasswordError"></div>
+          </div>
+
+          <div class="error-msg" id="loginGlobalError" style="text-align:center; margin-bottom:12px;"></div>
+
+          <button type="submit" class="btn-primary">LOGIN</button>
+        </form>
+
+        <div class="divider">OR</div>
+        <div class="link-text">
+          Don't have an account? <a onclick="showView('registration')">Sign Up</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== DETAILS VIEW ==================== -->
+    <div id="detailsView" class="view">
+      <div class="success-header">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        </div>
+        <h1>REGISTRATION SUCCESSFUL!</h1>
+        <p>Your account has been created successfully.</p>
+      </div>
+
+      <div class="form-body" style="padding-top: 0;">
+        <!-- Profile Photo Display -->
+        <div class="details-avatar-wrapper">
+          <div class="details-avatar" id="detailsAvatar">
+            <div class="placeholder">
+              <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          REGISTERED DETAILS
+        </div>
+
+        <div class="details-card" id="detailsCard">
+          <!-- Filled by JavaScript -->
+        </div>
+
+        <div class="info-note">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          <span>Please save your details for future reference.</span>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-home" onclick="goToHome()">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            GO TO HOME
+          </button>
+          <button class="btn-print" onclick="window.print()">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            PRINT DETAILS
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ============================================================
+    // DEFAULT AVATAR (SVG as Data URL)
+    // ============================================================
+    const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23e3f2fd'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%231a73e8'/%3E%3Cpath d='M20 85c0-16.5 13.5-30 30-30s30 13.5 30 30' fill='%231a73e8'/%3E%3C/svg%3E";
+
+    // Global variable to hold the selected Base64 image
+    let selectedProfilePic = null;
+
+    // ============================================================
+    // VIEW SWITCHING
+    // ============================================================
+    function showView(viewName) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      if (viewName === 'registration') {
+        document.getElementById('registrationView').classList.add('active');
+      } else if (viewName === 'login') {
+        document.getElementById('loginView').classList.add('active');
+      } else if (viewName === 'details') {
+        document.getElementById('detailsView').classList.add('active');
+        renderDetails();
+      }
+    }
+
+    // ============================================================
+    // PROFILE PHOTO UPLOAD LOGIC
+    // ============================================================
+    document.getElementById('profilePhoto').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Image size should be less than 2MB');
+        this.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const base64 = event.target.result;
+        selectedProfilePic = base64;
+
+        const img = document.getElementById('avatarImg');
+        const placeholder = document.getElementById('avatarPlaceholder');
+        img.src = base64;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+    function hideError(id) {
+      const el = document.getElementById(id);
+      el.textContent = '';
+      el.classList.remove('show');
+    }
+    function showSuccess(id) {
+      document.getElementById(id).classList.add('show');
+    }
+    function hideSuccess(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+    function setInputState(id, isValid) {
+      const input = document.getElementById(id);
+      input.classList.remove('error', 'valid');
+      if (isValid === true) input.classList.add('valid');
+      if (isValid === false) input.classList.add('error');
+    }
+
+    function togglePassword(inputId, iconEl) {
+      const input = document.getElementById(inputId);
+      const svg = iconEl.querySelector('svg');
+      if (input.type === 'password') {
+        input.type = 'text';
+        // Eye-off icon
+        svg.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+      } else {
+        input.type = 'password';
+        // Eye icon
+        svg.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+      }
+    }
+
+    function calculateAge(dobString) {
+      const dob = new Date(dobString);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+      return age;
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const [y, m, d] = dateStr.split('-');
+      return `${d}-${m}-${y}`;
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('dob').setAttribute('max', today);
+
+    // ============================================================
+    // REAL-TIME VALIDATION
+    // ============================================================
+    document.getElementById('fullName').addEventListener('input', function () {
+      const v = this.value.trim();
+      if (!v) { hideError('fullNameError'); setInputState('fullName', null); return; }
+      if (v.length < 3) {
+        showError('fullNameError', 'Full Name must be at least 3 characters.');
+        setInputState('fullName', false);
+      } else if (!/^[A-Za-z\s]+$/.test(v)) {
+        showError('fullNameError', 'Only alphabets and spaces are allowed.');
+        setInputState('fullName', false);
+      } else {
+        hideError('fullNameError');
+        setInputState('fullName', true);
+      }
+    });
+
+    document.getElementById('email').addEventListener('input', function () {
+      const v = this.value.trim();
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!v) { hideError('emailError'); setInputState('email', null); return; }
+      if (!regex.test(v)) {
+        showError('emailError', 'Please enter a valid email address (e.g. student@gmail.com).');
+        setInputState('email', false);
+      } else {
+        hideError('emailError');
+        setInputState('email', true);
+      }
+    });
+
+    document.getElementById('mobile').addEventListener('input', function () {
+      this.value = this.value.replace(/\D/g, '');
+      const v = this.value;
+      if (!v) { hideError('mobileError'); setInputState('mobile', null); return; }
+      if (v.length !== 10) {
+        showError('mobileError', 'Mobile number must be exactly 10 digits.');
+        setInputState('mobile', false);
+      } else {
+        hideError('mobileError');
+        setInputState('mobile', true);
+      }
+    });
+
+    document.getElementById('dob').addEventListener('change', function () {
+      const value = this.value;
+      const hint = document.getElementById('dobHint');
+      const ageDisplay = document.getElementById('ageDisplay');
+
+      if (!value) {
+        hideError('dobError');
+        setInputState('dob', null);
+        hint.classList.remove('show');
+        ageDisplay.classList.remove('show');
+        return;
+      }
+
+      const selected = new Date(value);
+      const todayDate = new Date();
+      todayDate.setHours(0,0,0,0);
+      const isValid = !isNaN(selected.getTime());
+      const isNotFuture = selected <= todayDate;
+      const age = calculateAge(value);
+      const isAdult = age >= 18;
+
+      hint.classList.add('show');
+      document.getElementById('hintValidDate').className = (isValid && isNotFuture) ? 'valid' : 'invalid';
+      document.getElementById('hintValidDate').textContent = (isValid && isNotFuture)
+        ? '✓ A valid date' : '✗ A valid date (future dates not allowed)';
+
+      document.getElementById('hintAge18').className = isAdult ? 'valid' : 'invalid';
+      document.getElementById('hintAge18').textContent = isAdult
+        ? '✓ You must be at least 18 years old' : '✗ You must be at least 18 years old';
+
+      if (!isValid) {
+        showError('dobError', 'Please enter a valid date.');
+        setInputState('dob', false);
+        ageDisplay.classList.remove('show');
+      } else if (!isNotFuture) {
+        showError('dobError', 'Date of Birth cannot be a future date.');
+        setInputState('dob', false);
+        ageDisplay.classList.remove('show');
+      } else if (!isAdult) {
+        showError('dobError', 'You must be at least 18 years old.');
+        setInputState('dob', false);
+        ageDisplay.classList.remove('show');
+      } else {
+        hideError('dobError');
+        setInputState('dob', true);
+        ageDisplay.textContent = `Calculated Age: ${age} years`;
+        ageDisplay.classList.add('show');
+      }
+    });
+
+    document.getElementById('startDate').addEventListener('change', validateRegDates);
+    document.getElementById('endDate').addEventListener('change', validateRegDates);
+
+    function validateRegDates() {
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+
+      hideError('startDateError'); hideError('endDateError');
+      hideSuccess('startDateSuccess'); hideSuccess('endDateSuccess');
+      setInputState('startDate', null); setInputState('endDate', null);
+
+      if (start) {
+        if (isNaN(new Date(start).getTime())) {
+          showError('startDateError', 'Please enter a valid start date.');
+          setInputState('startDate', false);
+        } else {
+          setInputState('startDate', true);
+          showSuccess('startDateSuccess');
+        }
+      }
+      if (end) {
+        if (isNaN(new Date(end).getTime())) {
+          showError('endDateError', 'Please enter a valid end date.');
+          setInputState('endDate', false);
+        } else {
+          setInputState('endDate', true);
+          showSuccess('endDateSuccess');
+        }
+      }
+      if (start && end && new Date(end) <= new Date(start)) {
+        showError('endDateError', 'End Date must be after Start Date.');
+        setInputState('endDate', false);
+        hideSuccess('endDateSuccess');
+      }
+    }
+
+    document.getElementById('password').addEventListener('input', function () {
+      const v = this.value;
+      if (!v) { hideError('passwordError'); setInputState('password', null); return; }
+      const ok = v.length >= 8 && /[A-Z]/.test(v) && /[a-z]/.test(v) && /[0-9]/.test(v) && /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(v);
+      if (!ok) {
+        showError('passwordError', 'Min 8 chars with uppercase, lowercase, number & special character.');
+        setInputState('password', false);
+      } else {
+        hideError('passwordError');
+        setInputState('password', true);
+      }
+      const conf = document.getElementById('confirmPassword').value;
+      if (conf) {
+        if (conf !== v) {
+          showError('confirmPasswordError', 'Passwords do not match.');
+          setInputState('confirmPassword', false);
+        } else {
+          hideError('confirmPasswordError');
+          setInputState('confirmPassword', true);
+        }
+      }
+    });
+
+    document.getElementById('confirmPassword').addEventListener('input', function () {
+      const v = this.value;
+      const pass = document.getElementById('password').value;
+      if (!v) { hideError('confirmPasswordError'); setInputState('confirmPassword', null); return; }
+      if (v !== pass) {
+        showError('confirmPasswordError', 'Passwords do not match.');
+        setInputState('confirmPassword', false);
+      } else {
+        hideError('confirmPasswordError');
+        setInputState('confirmPassword', true);
+      }
+    });
+
+    // ============================================================
+    // REGISTRATION SUBMIT
+    // ============================================================
+    document.getElementById('registrationForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const globalError = document.getElementById('regGlobalError');
+      globalError.classList.remove('show');
+      globalError.textContent = '';
+
+      let isValid = true;
+
+      const fullName = document.getElementById('fullName').value.trim();
+      if (!fullName) {
+        showError('fullNameError', 'Full Name is required.');
+        setInputState('fullName', false); isValid = false;
+      } else if (fullName.length < 3 || !/^[A-Za-z\s]+$/.test(fullName)) {
+        showError('fullNameError', 'Minimum 3 characters. Alphabets and spaces only.');
+        setInputState('fullName', false); isValid = false;
+      }
+
+      const email = document.getElementById('email').value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email) {
+        showError('emailError', 'Email Address is required.');
+        setInputState('email', false); isValid = false;
+      } else if (!emailRegex.test(email)) {
+        showError('emailError', 'Please enter a valid email format.');
+        setInputState('email', false); isValid = false;
+      }
+
+      const mobile = document.getElementById('mobile').value.trim();
+      if (!mobile) {
+        showError('mobileError', 'Mobile Number is required.');
+        setInputState('mobile', false); isValid = false;
+      } else if (!/^\d{10}$/.test(mobile)) {
+        showError('mobileError', 'Mobile number must be exactly 10 digits.');
+        setInputState('mobile', false); isValid = false;
+      }
+
+      const dob = document.getElementById('dob').value;
+      if (!dob) {
+        showError('dobError', 'Date of Birth is required.');
+        setInputState('dob', false); isValid = false;
+      } else {
+        const selected = new Date(dob);
+        const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+        const age = calculateAge(dob);
+        if (isNaN(selected.getTime())) {
+          showError('dobError', 'Please enter a valid date.');
+          setInputState('dob', false); isValid = false;
+        } else if (selected > todayDate) {
+          showError('dobError', 'Date of Birth cannot be a future date.');
+          setInputState('dob', false); isValid = false;
+        } else if (age < 18) {
+          showError('dobError', 'You must be at least 18 years old.');
+          setInputState('dob', false); isValid = false;
+        }
+      }
+
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+      if (!startDate) {
+        showError('startDateError', 'Registration Start Date is required.');
+        setInputState('startDate', false); isValid = false;
+      }
+      if (!endDate) {
+        showError('endDateError', 'Registration End Date is required.');
+        setInputState('endDate', false); isValid = false;
+      }
+      if (startDate && endDate && new Date(endDate) <= new Date(startDate)) {
+        showError('endDateError', 'End Date must be after Start Date.');
+        setInputState('endDate', false); isValid = false;
+      }
+
+      const password = document.getElementById('password').value;
+      const hasUpper = /[A-Z]/.test(password);
+      const hasLower = /[a-z]/.test(password);
+      const hasNumber = /[0-9]/.test(password);
+      const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+      if (!password) {
+        showError('passwordError', 'Password is required.');
+        setInputState('password', false); isValid = false;
+      } else if (password.length < 8 || !hasUpper || !hasLower || !hasNumber || !hasSpecial) {
+        showError('passwordError', 'Min 8 chars with uppercase, lowercase, number & special character.');
+        setInputState('password', false); isValid = false;
+      }
+
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      if (!confirmPassword) {
+        showError('confirmPasswordError', 'Confirm Password is required.');
+        setInputState('confirmPassword', false); isValid = false;
+      } else if (confirmPassword !== password) {
+        showError('confirmPasswordError', 'Passwords do not match.');
+        setInputState('confirmPassword', false); isValid = false;
+      }
+
+      if (!document.getElementById('terms').checked) {
+        showError('termsError', 'You must agree to the Terms & Conditions.');
+        isValid = false;
+      } else {
+        hideError('termsError');
+      }
+
+      if (!isValid) return;
+
+      let users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const emailExists = users.some(u => u.email.toLowerCase() === email.toLowerCase());
+      const mobileExists = users.some(u => u.mobile === mobile);
+
+      if (emailExists || mobileExists) {
+        globalError.textContent = 'Account already exists with this Email/Mobile. Please Login.';
+        globalError.classList.add('show');
+        return;
+      }
+
+      const age = calculateAge(dob);
+      const newUser = {
+        id: Date.now(),
+        fullName,
+        email,
+        mobile,
+        dob,
+        age,
+        startDate,
+        endDate,
+        password,
+        profilePic: selectedProfilePic || DEFAULT_AVATAR,
+        status: 'Active',
+        registeredAt: new Date().toISOString()
+      };
+
+      users.push(newUser);
+      localStorage.setItem('registeredUsers', JSON.stringify(users));
+      localStorage.setItem('currentUser', JSON.stringify(newUser));
+
+      // Reset form + photo
+      document.getElementById('registrationForm').reset();
+      document.querySelectorAll('input').forEach(i => i.classList.remove('error', 'valid'));
+      document.querySelectorAll('.error-msg, .success-msg, .age-display, .dob-hint').forEach(el => el.classList.remove('show'));
+      
+      selectedProfilePic = null;
+      document.getElementById('avatarImg').style.display = 'none';
+      document.getElementById('avatarPlaceholder').style.display = 'block';
+      document.getElementById('profilePhoto').value = '';
+
+      showView('details');
+    });
+
+    // ============================================================
+    // LOGIN SUBMIT
+    // ============================================================
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      hideError('loginIdError');
+      hideError('loginPasswordError');
+      hideError('loginGlobalError');
+
+      const loginId = document.getElementById('loginId').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      let isValid = true;
+
+      if (!loginId) {
+        showError('loginIdError', 'Email or Mobile Number is required.');
+        document.getElementById('loginId').classList.add('error');
+        isValid = false;
+      } else {
+        document.getElementById('loginId').classList.remove('error');
+      }
+
+      if (!password) {
+        showError('loginPasswordError', 'Password is required.');
+        document.getElementById('loginPassword').classList.add('error');
+        isValid = false;
+      } else {
+        document.getElementById('loginPassword').classList.remove('error');
+      }
+
+      if (!isValid) return;
+
+      const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const user = users.find(u =>
+        (u.email.toLowerCase() === loginId.toLowerCase() || u.mobile === loginId) &&
+        u.password === password
+      );
+
+      if (user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        document.getElementById('loginForm').reset();
+        showView('details');
+      } else {
+        showError('loginGlobalError', 'Invalid Email/Mobile or Password.');
+      }
+    });
+
+    // ============================================================
+    // RENDER DETAILS
+    // ============================================================
+    function renderDetails() {
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      if (!user) {
+        showView('login');
+        return;
+      }
+
+      // Display Profile Photo
+      const avatarContainer = document.getElementById('detailsAvatar');
+      const pic = user.profilePic || DEFAULT_AVATAR;
+      avatarContainer.innerHTML = `<img src="${pic}" alt="Profile Photo">`;
+
+      const details = [
+        { 
+          icon: `<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`, 
+          label: 'Full Name', 
+          value: user.fullName 
+        },
+        { 
+          icon: `<svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`, 
+          label: 'Email Address', 
+          value: user.email 
+        },
+        { 
+          icon: `<svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>`, 
+          label: 'Mobile Number', 
+          value: user.mobile 
+        },
+        { 
+          icon: `<svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>`, 
+          label: 'Date of Birth', 
+          value: formatDate(user.dob) 
+        },
+        { 
+          icon: `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>`, 
+          label: 'Age', 
+          value: user.age + ' years' 
+        },
+        { 
+          icon: `<svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>`, 
+          label: 'Registration Start Date', 
+          value: formatDate(user.startDate) 
+        },
+        { 
+          icon: `<svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>`, 
+          label: 'Registration End Date', 
+          value: formatDate(user.endDate) 
+        },
+        { 
+          icon: `<svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>`, 
+          label: 'Password', 
+          value: '••••••••' 
+        },
+        { 
+          icon: `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`, 
+          label: 'Status', 
+          value: 'Active', 
+          isStatus: true 
+        }
+      ];
+
+      document.getElementById('detailsCard').innerHTML = details.map(item => `
+        <div class="detail-row">
+          <div class="detail-icon">${item.icon}</div>
+          <div class="detail-label">${item.label}</div>
+          <div class="detail-value">
+            ${item.isStatus
+              ? `<span class="status-badge">
+                   <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                   Active
+                 </span>`
+              : item.value}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ============================================================
+    // GO TO HOME
+    // ============================================================
+    function goToHome() {
+      localStorage.removeItem('currentUser');
+      showView('registration');
+    }
+
+    // On load
+    window.addEventListener('DOMContentLoaded', () => {
+      const current = localStorage.getItem('currentUser');
+      if (current) {
+        showView('details');
+      }
+    });
+  </script>
+</body>
+</html>
