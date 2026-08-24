@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Virtual Lab — Online Code Editor</title>
-  <link rel="stylesheet" href="home.css">
+<link rel="stylesheet" href="home.css">
 <script src="home.js" defer></script>
+
 <style>
   :root {
     --bg: #0a0e1a;
@@ -43,221 +44,1073 @@
     --red-bg: #fee2e2;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     background: var(--bg);
     color: var(--text);
     font-family: var(--sans);
     min-height: 100vh;
     transition: background 0.3s, color 0.3s;
+    overflow-x: hidden;
   }
 
   /* Modal / Login Styles */
   .modal-overlay {
-    position: fixed; inset: 0; background: rgba(5, 8, 16, 0.85);
-    backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 8, 16, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     z-index: 1000;
+    padding: 16px;
   }
+
   .modal-card {
-    background: var(--card); border: 1px solid var(--border);
-    padding: 32px; border-radius: 16px; width: 100%; max-width: 420px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 32px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 420px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.5);
   }
-  .form-group { margin-bottom: 18px; }
-  .form-group label { display: block; font-size: 13px; margin-bottom: 6px; color: var(--text-dim); }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: var(--text-dim);
+  }
+
   .form-control {
-    width: 100%; padding: 11px 14px; background: var(--card-2);
-    border: 1px solid var(--border); border-radius: 8px; color: var(--text);
-    font-size: 14px; outline: none;
+    width: 100%;
+    padding: 11px 14px;
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
   }
 
   header.topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 28px; border-bottom: 1px solid var(--border-soft);
-    background: var(--bg-elev); position: sticky; top: 0; z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 28px;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg-elev);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    min-height: 68px;
   }
-  .brand { display: flex; align-items: center; gap: 12px; }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
   .brand-icon {
-    width: 40px; height: 40px; border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
   }
-  .brand-name { font-weight: 800; font-size: 17px; }
+
+  .brand-name {
+    font-weight: 800;
+    font-size: 17px;
+    white-space: nowrap;
+  }
+
   .brand-name span {
     background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
-  .brand-sub { font-size: 11.5px; color: var(--text-faint); }
-  .topbar-right { display: flex; align-items: center; gap: 14px; }
+
+  .brand-sub {
+    font-size: 11.5px;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+
   .theme-toggle {
-    width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border);
-    background: var(--card-2); display: flex; align-items: center; justify-content: center;
-    font-size: 16px; cursor: pointer; color: var(--text);
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--text);
+    flex-shrink: 0;
   }
+
   .profile {
-    display: flex; align-items: center; gap: 9px;
-    background: var(--card-2); border: 1px solid var(--border);
-    padding: 5px 12px 5px 5px; border-radius: 24px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    padding: 5px 12px 5px 5px;
+    border-radius: 24px;
+    min-width: 0;
   }
+
   .avatar {
-    width: 28px; height: 28px; border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
     background: linear-gradient(135deg, #f472b6, #a855f7);
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
-  .layout { display: grid; grid-template-columns: 230px 1fr; min-height: calc(100vh - 68px); }
+
+  #userProfileDisplay {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    min-height: calc(100vh - 68px);
+  }
+
   aside.sidebar {
     border-right: 1px solid var(--border-soft);
-    padding: 18px 14px; display: flex; flex-direction: column; gap: 4px;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     background: var(--bg-elev);
+    min-width: 0;
   }
+
   .navitem {
-    display: flex; align-items: center; gap: 11px; padding: 11px 13px;
-    border-radius: 10px; background: none; border: none;
-    color: var(--text-dim); font-size: 14.5px; font-weight: 500;
-    text-align: left; width: 100%; cursor: pointer; transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 11px 13px;
+    border-radius: 10px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 14.5px;
+    font-weight: 500;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    transition: 0.2s;
   }
-  .navitem:hover { background: var(--card-2); color: var(--text); }
+
+  .navitem:hover {
+    background: var(--card-2);
+    color: var(--text);
+  }
+
   .navitem.active {
     background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-    color: #fff; box-shadow: 0 4px 14px rgba(99,102,241,.35);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(99,102,241,.35);
   }
-  .sidebar-divider { height: 1px; background: var(--border-soft); margin: 12px 4px; }
+
+  .sidebar-divider {
+    height: 1px;
+    background: var(--border-soft);
+    margin: 12px 4px;
+  }
+
   .promo {
-    margin-top: auto; border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 18px 14px; text-align: center; background: var(--card-2);
+    margin-top: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 14px;
+    text-align: center;
+    background: var(--card-2);
   }
-  main.content { padding: 24px 28px 40px; }
-  .view-section { display: none; }
-  .view-section.active { display: block; }
+
+  main.content {
+    padding: 24px 28px 40px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .view-section {
+    display: none;
+    min-width: 0;
+  }
+
+  .view-section.active {
+    display: block;
+  }
+
   .page-head {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 20px; flex-wrap: wrap; gap: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 14px;
   }
-  .page-title { font-size: 22px; font-weight: 800; }
-  .page-sub { color: var(--text-faint); font-size: 13.5px; margin-top: 2px; }
+
+  .page-title {
+    font-size: 22px;
+    font-weight: 800;
+  }
+
+  .page-sub {
+    color: var(--text-faint);
+    font-size: 13.5px;
+    margin-top: 2px;
+  }
+
   select {
-    background: var(--card); border: 1px solid var(--border); color: var(--text);
-    padding: 9px 14px; border-radius: 9px; font-size: 13.5px; font-weight: 600;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 14px;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 600;
+    max-width: 100%;
   }
-  .editor-grid { display: grid; grid-template-columns: 1fr 300px; gap: 18px; }
-  @media (max-width: 980px) { .editor-grid { grid-template-columns: 1fr; } }
+
+  .editor-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 18px;
+  }
+
   .card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    min-width: 0;
   }
+
   .tabbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 6px; border-bottom: 1px solid var(--border-soft); background: var(--card-2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--card-2);
+    min-width: 0;
   }
+
   .tab {
-    display: flex; align-items: center; gap: 8px; padding: 12px 16px;
-    font-size: 13.5px; color: var(--text); border-bottom: 2px solid var(--accent-1); font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: var(--text);
+    border-bottom: 2px solid var(--accent-1);
+    font-weight: 600;
   }
-  .editor-body { display: flex; background: var(--card); }
+
+  .editor-body {
+    display: flex;
+    background: var(--card);
+    min-width: 0;
+    overflow: hidden;
+  }
+
   .gutter {
-    user-select: none; text-align: right; padding: 14px 10px 14px 0;
-    color: var(--text-faint); font-family: var(--mono); font-size: 13.5px;
-    line-height: 22px; background: var(--card-2); border-right: 1px solid var(--border-soft);
-    min-width: 46px; white-space: pre;
+    user-select: none;
+    text-align: right;
+    padding: 14px 10px 14px 0;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 22px;
+    background: var(--card-2);
+    border-right: 1px solid var(--border-soft);
+    min-width: 46px;
+    white-space: pre;
+    overflow: hidden;
+    flex-shrink: 0;
   }
+
   textarea#codearea {
-    flex: 1; resize: none; border: none; outline: none; background: transparent;
-    color: var(--text); font-family: var(--mono); font-size: 13.5px;
-    line-height: 22px; padding: 14px 16px; min-height: 420px; white-space: pre; tab-size: 4;
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 22px;
+    padding: 14px 16px;
+    min-height: 420px;
+    white-space: pre;
+    tab-size: 4;
+    min-width: 0;
   }
+
   .statusbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 8px 14px; border-top: 1px solid var(--border-soft);
-    background: var(--card-2); font-size: 12px; color: var(--text-faint);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 14px;
+    border-top: 1px solid var(--border-soft);
+    background: var(--card-2);
+    font-size: 12px;
+    color: var(--text-faint);
+    flex-wrap: wrap;
   }
-  .side-col { display: flex; flex-direction: column; gap: 16px; }
+
+  .side-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+
   .panel {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    min-width: 0;
   }
-  .panel h3 { margin: 0 0 12px; font-size: 14px; }
+
+  .panel h3 {
+    margin: 0 0 12px;
+    font-size: 14px;
+  }
+
   .btn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; padding: 11px 14px; border-radius: 10px; border: none;
-    font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 9px; cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 9px;
+    cursor: pointer;
   }
-  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
-  .btn-run { background: linear-gradient(135deg, #22c55e, #16a34a); }
-  .btn-compile { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-  .btn-clear { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-  .btn-save { background: var(--card-2); color: var(--text); border: 1px solid var(--border); }
-  .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn-run {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+  }
+
+  .btn-compile {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+  }
+
+  .btn-clear {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  }
+
+  .btn-save {
+    background: var(--card-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+  }
+
   .info-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 7px 0; font-size: 13px; border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-soft);
   }
-  .info-row:last-child { border: none; }
+
+  .info-row:last-child {
+    border: none;
+  }
+
   .badge {
-    padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    white-space: nowrap;
   }
-  .badge.ready { background: #1c2740; color: #9db3e8; }
-  .badge.running { background: #3a3510; color: var(--yellow); }
-  .badge.success { background: var(--green-bg); color: var(--green); }
-  .badge.error { background: var(--red-bg); color: var(--red); }
+
+  .badge.ready {
+    background: #1c2740;
+    color: #9db3e8;
+  }
+
+  .badge.running {
+    background: #3a3510;
+    color: var(--yellow);
+  }
+
+  .badge.success {
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .badge.error {
+    background: var(--red-bg);
+    color: var(--red);
+  }
+
   .console-grid {
-    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 18px;
   }
-  @media (max-width: 980px) { .console-grid { grid-template-columns: 1fr; } }
-  .console-card { display: flex; flex-direction: column; height: 280px; }
+
+  .console-card {
+    display: flex;
+    flex-direction: column;
+    height: 280px;
+    min-width: 0;
+  }
+
   .console-head {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 14px; border-bottom: 1px solid var(--border-soft); background: var(--card-2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--card-2);
+    flex-shrink: 0;
   }
+
   .console-body {
-    flex: 1; overflow: auto; padding: 14px; font-family: var(--mono);
-    font-size: 12.8px; line-height: 1.65; white-space: pre-wrap;
+    flex: 1;
+    overflow: auto;
+    padding: 14px;
+    font-family: var(--mono);
+    font-size: 12.8px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    min-height: 0;
   }
+
   .console-foot {
-    padding: 8px 14px; border-top: 1px solid var(--border-soft);
-    font-size: 11.5px; color: var(--text-faint); background: var(--card-2);
+    padding: 8px 14px;
+    border-top: 1px solid var(--border-soft);
+    font-size: 11.5px;
+    color: var(--text-faint);
+    background: var(--card-2);
+    flex-shrink: 0;
   }
+
   textarea#stdinarea {
-    width: 100%; height: 100%; resize: none; border: none; outline: none;
-    background: transparent; color: var(--text); font-family: var(--mono); font-size: 13px;
+    width: 100%;
+    height: 100%;
+    resize: none;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    min-width: 0;
   }
-  .placeholder-empty { color: var(--text-faint); font-style: italic; }
+
+  .placeholder-empty {
+    color: var(--text-faint);
+    font-style: italic;
+  }
+
   .testcase {
-    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 9px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 9px;
   }
-  .testcase-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+
+  .testcase-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
   .icon-btn {
-    width: 28px; height: 28px; border-radius: 6px; border: none; background: none;
-    color: var(--text-dim); cursor: pointer; font-size: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 14px;
   }
-  .icon-btn:hover { background: var(--border-soft); color: var(--text); }
+
+  .icon-btn:hover {
+    background: var(--border-soft);
+    color: var(--text);
+  }
+
   footer.pagefoot {
-    text-align: center; padding: 22px; color: var(--text-faint); font-size: 12.5px;
-    border-top: 1px solid var(--border-soft); margin-top: 20px;
+    text-align: center;
+    padding: 22px;
+    color: var(--text-faint);
+    font-size: 12.5px;
+    border-top: 1px solid var(--border-soft);
+    margin-top: 20px;
   }
+
   .toast {
-    background: var(--card); border: 1px solid var(--border); color: var(--text);
-    padding: 11px 16px; border-radius: 10px; font-size: 13.5px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.35); margin-bottom: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    margin-bottom: 8px;
   }
-  .toast-wrap { position: fixed; top: 78px; right: 26px; z-index: 200; }
-  
+
+  .toast-wrap {
+    position: fixed;
+    top: 78px;
+    right: 26px;
+    z-index: 200;
+    max-width: calc(100vw - 40px);
+  }
+
   .list-item-box {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px 18px; margin-bottom: 12px;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
   }
+
+  .list-item-box > div:first-child {
+    min-width: 0;
+  }
+
+  .list-item-box strong {
+    overflow-wrap: anywhere;
+  }
+
   .practical-filter {
-    display: flex; gap: 10px; margin-bottom: 18px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
   }
+
   .filter-btn {
-    padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border);
-    background: var(--card-2); color: var(--text-dim); cursor: pointer; font-weight: 600; font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card-2);
+    color: var(--text-dim);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
   }
+
   .filter-btn.active {
-    background: var(--accent-1); color: #fff; border-color: var(--accent-1);
+    background: var(--accent-1);
+    color: #fff;
+    border-color: var(--accent-1);
+  }
+
+  /* =========================================================
+     RESPONSIVE MOBILE DESIGN
+     Everything above remains the desktop styling.
+     The following rules only improve smaller screens.
+     ========================================================= */
+
+  @media (max-width: 980px) {
+    .layout {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    aside.sidebar {
+      border-right: none;
+      border-bottom: 1px solid var(--border-soft);
+      padding: 10px 12px;
+      flex-direction: row;
+      align-items: center;
+      gap: 7px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+
+    aside.sidebar .navitem {
+      width: auto;
+      min-width: max-content;
+      padding: 9px 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .sidebar-divider,
+    .promo {
+      display: none;
+    }
+
+    main.content {
+      padding: 20px;
+    }
+
+    .editor-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .console-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .console-card {
+      height: 280px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    header.topbar {
+      padding: 10px 14px;
+      min-height: 60px;
+    }
+
+    .brand {
+      gap: 8px;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+
+    .brand-name {
+      font-size: 14px;
+    }
+
+    .brand-sub {
+      font-size: 9.5px;
+    }
+
+    .topbar-right {
+      gap: 7px;
+    }
+
+    .theme-toggle {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+    }
+
+    .profile {
+      padding: 3px 8px 3px 3px;
+      gap: 5px;
+    }
+
+    .avatar {
+      width: 27px;
+      height: 27px;
+      font-size: 13px;
+    }
+
+    #userProfileDisplay {
+      max-width: 105px;
+      font-size: 11px;
+    }
+
+    aside.sidebar {
+      padding: 8px 10px;
+    }
+
+    aside.sidebar .navitem {
+      font-size: 12.5px;
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
+
+    main.content {
+      padding: 16px 12px 30px;
+    }
+
+    .page-head {
+      align-items: flex-start;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+
+    .page-title {
+      font-size: 19px;
+      line-height: 1.25;
+    }
+
+    .page-sub {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .page-head > div:last-child {
+      width: 100%;
+    }
+
+    .page-head > div:last-child select {
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    .editor-grid {
+      gap: 12px;
+    }
+
+    .editor-body {
+      min-height: 340px;
+    }
+
+    textarea#codearea {
+      min-height: 340px;
+      height: 340px;
+      font-size: 12.5px;
+      line-height: 21px;
+      padding: 12px;
+      overflow: auto;
+    }
+
+    .gutter {
+      min-width: 39px;
+      padding-right: 7px;
+      font-size: 12px;
+      line-height: 21px;
+      padding-top: 12px;
+    }
+
+    .tab {
+      padding: 10px 12px;
+      font-size: 12.5px;
+    }
+
+    .statusbar {
+      padding: 7px 10px;
+      font-size: 10.5px;
+    }
+
+    .side-col {
+      gap: 12px;
+    }
+
+    .panel {
+      padding: 13px;
+      border-radius: 10px;
+    }
+
+    .panel h3 {
+      font-size: 13.5px;
+    }
+
+    .btn {
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    .console-grid {
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .console-card {
+      height: 250px;
+      border-radius: 10px;
+    }
+
+    .console-head {
+      padding: 10px 11px;
+      font-size: 12.5px;
+    }
+
+    .console-body {
+      padding: 11px;
+      font-size: 11.5px;
+    }
+
+    .console-foot {
+      padding: 7px 11px;
+      font-size: 10.5px;
+    }
+
+    .list-item-box {
+      padding: 12px;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .list-item-box > div:last-child {
+      width: 100%;
+      display: flex;
+    }
+
+    .list-item-box > div:last-child .btn {
+      flex: 1;
+    }
+
+    .list-item-box > .btn {
+      width: 100% !important;
+    }
+
+    .badge {
+      font-size: 10.5px;
+    }
+
+    .practical-filter {
+      gap: 6px;
+      margin-bottom: 13px;
+    }
+
+    .filter-btn {
+      padding: 6px 11px;
+      font-size: 12px;
+    }
+
+    .toast-wrap {
+      top: 68px;
+      right: 12px;
+      left: 12px;
+      max-width: none;
+    }
+
+    .toast {
+      font-size: 12.5px;
+    }
+
+    footer.pagefoot {
+      padding: 18px 10px;
+      font-size: 11px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    header.topbar {
+      padding: 9px 10px;
+    }
+
+    .brand-sub {
+      display: none;
+    }
+
+    .brand-name {
+      font-size: 13px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      font-size: 15px;
+    }
+
+    .profile {
+      max-width: 120px;
+    }
+
+    #userProfileDisplay {
+      max-width: 75px;
+      font-size: 10px;
+    }
+
+    .theme-toggle {
+      width: 32px;
+      height: 32px;
+    }
+
+    aside.sidebar {
+      padding: 7px 8px;
+    }
+
+    aside.sidebar .navitem {
+      font-size: 11.5px;
+      padding: 7px 9px;
+    }
+
+    main.content {
+      padding: 14px 9px 24px;
+    }
+
+    .page-title {
+      font-size: 18px;
+    }
+
+    .page-sub {
+      font-size: 11.5px;
+    }
+
+    .editor-body {
+      min-height: 300px;
+    }
+
+    textarea#codearea {
+      min-height: 300px;
+      height: 300px;
+      font-size: 11.5px;
+      line-height: 20px;
+      padding: 10px;
+    }
+
+    .gutter {
+      min-width: 35px;
+      padding-right: 6px;
+      font-size: 11px;
+      line-height: 20px;
+      padding-top: 10px;
+    }
+
+    .tab {
+      padding: 9px 10px;
+      font-size: 11.5px;
+    }
+
+    .statusbar {
+      font-size: 9.5px;
+    }
+
+    .panel {
+      padding: 11px;
+    }
+
+    .info-row {
+      font-size: 12px;
+    }
+
+    .console-card {
+      height: 230px;
+    }
+
+    .console-head {
+      font-size: 11.5px;
+    }
+
+    .console-body {
+      font-size: 10.8px;
+    }
+
+    .console-foot {
+      font-size: 10px;
+    }
+
+    .modal-card {
+      padding: 22px 18px;
+      border-radius: 14px;
+    }
+
+    .modal-card h2 {
+      font-size: 20px;
+    }
+
+    .form-control {
+      padding: 10px 12px;
+    }
+
+    .list-item-box {
+      padding: 11px;
+    }
+
+    .list-item-box .btn {
+      font-size: 12px;
+      padding: 9px 10px;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .brand-name {
+      display: none;
+    }
+
+    #userProfileDisplay {
+      max-width: 65px;
+    }
+
+    aside.sidebar .navitem {
+      font-size: 10.5px;
+      padding: 7px 8px;
+    }
+
+    main.content {
+      padding-left: 7px;
+      padding-right: 7px;
+    }
+
+    textarea#codearea {
+      font-size: 11px;
+    }
+
+    .gutter {
+      min-width: 32px;
+      font-size: 10px;
+    }
   }
 </style>
 </head>
+
 <body>
 
 <!-- Login Modal -->
@@ -268,11 +1121,13 @@
       <h2>Welcome to Virtual Lab</h2>
       <p style="font-size:13px; color:var(--text-faint); margin-top:4px;">Please sign in to continue</p>
     </div>
+
     <form id="loginForm">
       <div class="form-group">
         <label for="userNameInput">Full Name</label>
         <input type="text" id="userNameInput" class="form-control" placeholder="Enter your name" required>
       </div>
+
       <div class="form-group">
         <label for="userRoleInput">Role</label>
         <select id="userRoleInput" class="form-control">
@@ -280,7 +1135,10 @@
           <option value="Professor">Professor</option>
         </select>
       </div>
-      <button type="submit" class="btn btn-compile" style="margin-top:20px; width:100%;">Enter Virtual Lab</button>
+
+      <button type="submit" class="btn btn-compile" style="margin-top:20px; width:100%;">
+        Enter Virtual Lab
+      </button>
     </form>
   </div>
 </div>
@@ -293,8 +1151,10 @@
       <div class="brand-sub">Online Code Execution</div>
     </div>
   </div>
+
   <div class="topbar-right">
     <button class="theme-toggle" id="themeToggle" title="Toggle Theme">🌙</button>
+
     <div class="profile">
       <div class="avatar" id="userAvatar">🧑</div>
       <span id="userProfileDisplay">Guest</span>
@@ -303,31 +1163,43 @@
 </header>
 
 <div class="layout">
+
   <aside class="sidebar">
     <button class="navitem active" data-target="editorView">💻 Code Editor</button>
     <button class="navitem" data-target="historyView">🕘 History</button>
     <button class="navitem" data-target="savedView">🔖 Saved Codes</button>
     <button class="navitem" data-target="practicalsView">🧪 Practicals</button>
     <button class="navitem" data-target="helpView">❓ Help</button>
+
     <div class="sidebar-divider"></div>
+
     <button class="navitem" id="logoutBtn" style="color:var(--red);">⏻ Logout</button>
+
     <div class="promo">
       <div style="font-size:30px;margin-bottom:8px">🖥️</div>
       <h4>Write, Compile & Run</h4>
-      <p style="font-size:12px;color:var(--text-faint)">Real C, C++, Java & Python powered by Judge0</p>
+      <p style="font-size:12px;color:var(--text-faint)">
+        Real C, C++, Java & Python powered by Judge0
+      </p>
     </div>
   </aside>
 
   <main class="content">
+
     <!-- CODE EDITOR VIEW -->
     <div id="editorView" class="view-section active">
+
       <div class="page-head">
         <div>
           <h1 class="page-title">Online Code Editor</h1>
           <p class="page-sub">Write your code, select language and run it.</p>
         </div>
+
         <div>
-          <label style="font-size:13px;color:var(--text-dim);margin-right:8px">Language:</label>
+          <label style="font-size:13px;color:var(--text-dim);margin-right:8px">
+            Language:
+          </label>
+
           <select id="langSelect">
             <option value="50">C (GCC)</option>
             <option value="54">C++ (GCC)</option>
@@ -338,25 +1210,42 @@
       </div>
 
       <div class="editor-grid">
+
         <div class="card">
+
           <div class="tabbar">
-            <div class="tab"><span>📄</span> <span id="fileTabName">main.c</span></div>
+            <div class="tab">
+              <span>📄</span>
+              <span id="fileTabName">main.c</span>
+            </div>
           </div>
+
           <div class="editor-body">
             <div class="gutter" id="gutter">1</div>
-            <textarea id="codearea" spellcheck="false"></textarea>
+
+            <textarea
+              id="codearea"
+              spellcheck="false"
+            ></textarea>
           </div>
+
           <div class="statusbar">
             <div>
-              <span id="cursorPos">Ln 1, Col 1</span> · Spaces: 4 · UTF-8 · <span id="langLabel">C</span>
+              <span id="cursorPos">Ln 1, Col 1</span>
+              · Spaces: 4 · UTF-8 ·
+              <span id="langLabel">C</span>
             </div>
+
             <div>Auto Save ●</div>
           </div>
+
         </div>
 
         <div class="side-col">
+
           <div class="panel">
             <h3>▶️ Run Code</h3>
+
             <button class="btn btn-run" id="runBtn">▶ Run Code</button>
             <button class="btn btn-compile" id="compileBtn">⚙ Compile</button>
             <button class="btn btn-clear" id="clearBtn">↻ Clear</button>
@@ -365,105 +1254,213 @@
 
           <div class="panel">
             <h3>📊 Execution Info</h3>
-            <div class="info-row"><span>Status</span><span class="badge ready" id="statusBadge">Ready</span></div>
-            <div class="info-row"><span>Execution Time</span><span id="execTime">–</span></div>
-            <div class="info-row"><span>Memory Used</span><span id="execMem">–</span></div>
-            <div class="info-row"><span>Exit Code</span><span id="execExit">–</span></div>
+
+            <div class="info-row">
+              <span>Status</span>
+              <span class="badge ready" id="statusBadge">Ready</span>
+            </div>
+
+            <div class="info-row">
+              <span>Execution Time</span>
+              <span id="execTime">–</span>
+            </div>
+
+            <div class="info-row">
+              <span>Memory Used</span>
+              <span id="execMem">–</span>
+            </div>
+
+            <div class="info-row">
+              <span>Exit Code</span>
+              <span id="execExit">–</span>
+            </div>
           </div>
 
           <div class="panel">
             <h3>⬆️ Upload Code</h3>
+
             <label class="btn btn-save" style="margin:0;cursor:pointer">
               📤 Choose File
-              <input type="file" id="fileInput" accept=".c,.cpp,.java,.py,.txt" style="display:none">
+
+              <input
+                type="file"
+                id="fileInput"
+                accept=".c,.cpp,.java,.py,.txt"
+                style="display:none"
+              >
             </label>
           </div>
 
           <div class="panel">
+
             <h3 style="display:flex;justify-content:space-between;align-items:center">
               <span>🧪 Test Cases</span>
-              <button class="btn" style="width:auto;padding:4px 10px;font-size:12px;margin:0;background:var(--accent-1)" id="addTcBtn">+ Add</button>
+
+              <button
+                class="btn"
+                style="width:auto;padding:4px 10px;font-size:12px;margin:0;background:var(--accent-1)"
+                id="addTcBtn"
+              >
+                + Add
+              </button>
             </h3>
+
             <div id="testcaseList"></div>
           </div>
+
         </div>
       </div>
 
       <div class="console-grid">
+
         <div class="card console-card">
+
           <div class="console-head">
             <div>📤 Output Console</div>
+
             <div>
               <button class="icon-btn" onclick="copyText('outputBody')">📋</button>
               <button class="icon-btn" onclick="clearConsole('outputBody')">🗑</button>
             </div>
           </div>
-          <div class="console-body" id="outputBody"><span class="placeholder-empty">Output will appear here…</span></div>
-          <div class="console-foot"><span id="outputStatus">Idle</span></div>
+
+          <div class="console-body" id="outputBody">
+            <span class="placeholder-empty">Output will appear here…</span>
+          </div>
+
+          <div class="console-foot">
+            <span id="outputStatus">Idle</span>
+          </div>
         </div>
 
         <div class="card console-card">
+
           <div class="console-head">
             <div>⚠️ Error Console</div>
+
             <div>
               <button class="icon-btn" onclick="copyText('errorBody')">📋</button>
               <button class="icon-btn" onclick="clearConsole('errorBody')">🗑</button>
             </div>
           </div>
-          <div class="console-body" id="errorBody"><span class="placeholder-empty">No errors yet.</span></div>
-          <div class="console-foot"><span id="errorStatus">Idle</span></div>
+
+          <div class="console-body" id="errorBody">
+            <span class="placeholder-empty">No errors yet.</span>
+          </div>
+
+          <div class="console-foot">
+            <span id="errorStatus">Idle</span>
+          </div>
         </div>
 
         <div class="card console-card">
+
           <div class="console-head">
             <div>⌨️ Input (stdin)</div>
           </div>
+
           <div class="console-body" style="padding:10px">
-            <textarea id="stdinarea" placeholder="Provide input for your program…"></textarea>
+            <textarea
+              id="stdinarea"
+              placeholder="Provide input for your program…"
+            ></textarea>
           </div>
-          <div class="console-foot">Fed to the program</div>
+
+          <div class="console-foot">
+            Fed to the program
+          </div>
         </div>
+
       </div>
     </div>
 
     <!-- HISTORY VIEW -->
     <div id="historyView" class="view-section">
+
       <div class="page-head">
         <div>
           <h1 class="page-title">🕘 Execution History</h1>
-          <p class="page-sub">Shows your last 5 code executions in browser session storage.</p>
+          <p class="page-sub">
+            Shows your last 5 code executions in browser session storage.
+          </p>
         </div>
-        <button class="btn btn-save" style="width:auto; margin:0;" onclick="clearHistory()">Clear History</button>
+
+        <button
+          class="btn btn-save"
+          style="width:auto; margin:0;"
+          onclick="clearHistory()"
+        >
+          Clear History
+        </button>
       </div>
+
       <div id="historyList"></div>
     </div>
 
     <!-- SAVED CODES VIEW -->
     <div id="savedView" class="view-section">
+
       <div class="page-head">
         <div>
           <h1 class="page-title">🔖 Saved Codes</h1>
           <p class="page-sub">Your locally stored code snippets.</p>
         </div>
       </div>
+
       <div id="savedList"></div>
     </div>
 
     <!-- PRACTICALS VIEW -->
     <div id="practicalsView" class="view-section">
+
       <div class="page-head">
         <div>
           <h1 class="page-title">🧪 Practicals & Assignments</h1>
-          <p class="page-sub">Select a lab exercise to auto-load standard executable code directly into your editor.</p>
+
+          <p class="page-sub">
+            Select a lab exercise to auto-load standard executable code
+            directly into your editor.
+          </p>
         </div>
       </div>
-      
+
       <div class="practical-filter">
-        <button class="filter-btn active" onclick="filterPracticals('all', this)">All</button>
-        <button class="filter-btn" onclick="filterPracticals('50', this)">C</button>
-        <button class="filter-btn" onclick="filterPracticals('54', this)">C++</button>
-        <button class="filter-btn" onclick="filterPracticals('62', this)">Java</button>
-        <button class="filter-btn" onclick="filterPracticals('71', this)">Python</button>
+
+        <button
+          class="filter-btn active"
+          onclick="filterPracticals('all', this)"
+        >
+          All
+        </button>
+
+        <button
+          class="filter-btn"
+          onclick="filterPracticals('50', this)"
+        >
+          C
+        </button>
+
+        <button
+          class="filter-btn"
+          onclick="filterPracticals('54', this)"
+        >
+          C++
+        </button>
+
+        <button
+          class="filter-btn"
+          onclick="filterPracticals('62', this)"
+        >
+          Java
+        </button>
+
+        <button
+          class="filter-btn"
+          onclick="filterPracticals('71', this)"
+        >
+          Python
+        </button>
+
       </div>
 
       <div id="practicalsList"></div>
@@ -471,14 +1468,20 @@
 
     <!-- HELP VIEW -->
     <div id="helpView" class="view-section">
+
       <div class="page-head">
         <div>
           <h1 class="page-title">❓ Help & Documentation</h1>
-          <p class="page-sub">Learn how to use Virtual Lab effectively.</p>
+          <p class="page-sub">
+            Learn how to use Virtual Lab effectively.
+          </p>
         </div>
       </div>
+
       <div class="panel">
+
         <h3>How to execute code:</h3>
+
         <p style="font-size:14px; color:var(--text-dim); line-height:1.6; margin-bottom:12px;">
           1. Select your target programming language from the dropdown menu.<br>
           2. Type or paste your code inside the central code editor panel.<br>
@@ -486,10 +1489,14 @@
           4. Click <strong>▶ Run Code</strong> to submit and view your standard output or compilation errors.<br>
           5. Browse <strong>Practicals</strong> to load ready-to-run tasks directly into the workspace.
         </p>
+
       </div>
     </div>
 
-    <footer class="pagefoot">© 2026 Virtual Lab · Designed for Students</footer>
+    <footer class="pagefoot">
+      © 2026 Virtual Lab · Designed for Students
+    </footer>
+
   </main>
 </div>
 
@@ -506,40 +1513,64 @@ const DEFAULT_CODE = {
 };
 
 const PRACTICALS_DATA = [
-  // C PRACTICALS
   { id: 101, langId: 50, title: "C Practical 1: Sum of Two Numbers", desc: "Reads two integers from stdin and prints their sum.", code: `#include <stdio.h>\n\nint main() {\n    int a = 12, b = 25;\n    if (scanf("%d %d", &a, &b) == 2) {}\n    printf("Sum: %d\\n", a + b);\n    return 0;\n}`, defaultInput: "15 30" },
+
   { id: 102, langId: 50, title: "C Practical 2: Even or Odd Checker", desc: "Checks whether a number is even or odd.", code: `#include <stdio.h>\n\nint main() {\n    int num = 7;\n    if (scanf("%d", &num) == 1) {}\n    if (num % 2 == 0)\n        printf("%d is Even\\n", num);\n    else\n        printf("%d is Odd\\n", num);\n    return 0;\n}`, defaultInput: "42" },
+
   { id: 103, langId: 50, title: "C Practical 3: Factorial Calculation", desc: "Calculates the factorial of an integer.", code: `#include <stdio.h>\n\nint main() {\n    int n = 5;\n    long long fact = 1;\n    if (scanf("%d", &n) == 1) {}\n    for (int i = 1; i <= n; i++) {\n        fact *= i;\n    }\n    printf("Factorial of %d is %lld\\n", n, fact);\n    return 0;\n}`, defaultInput: "5" },
+
   { id: 104, langId: 50, title: "C Practical 4: Largest of Three Numbers", desc: "Finds the maximum value among three numbers.", code: `#include <stdio.h>\n\nint main() {\n    int a = 10, b = 25, c = 15;\n    if (scanf("%d %d %d", &a, &b, &c) == 3) {}\n    int max = (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);\n    printf("Largest number is: %d\\n", max);\n    return 0;\n}`, defaultInput: "10 45 32" },
+
   { id: 105, langId: 50, title: "C Practical 5: Reverse a String", desc: "Reverses an inputted string.", code: `#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char str[100] = "VirtualLab";\n    if (scanf("%99s", str) == 1) {}\n    int len = strlen(str);\n    printf("Reversed String: ");\n    for (int i = len - 1; i >= 0; i--) {\n        putchar(str[i]);\n    }\n    printf("\\n");\n    return 0;\n}`, defaultInput: "hello" },
 
-  // C++ PRACTICALS
   { id: 201, langId: 54, title: "C++ Practical 1: Swapping Two Numbers", desc: "Swaps two integer values.", code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 5, b = 10;\n    if (cin >> a >> b) {}\n    cout << "Before Swap: a=" << a << ", b=" << b << endl;\n    swap(a, b);\n    cout << "After Swap:  a=" << a << ", b=" << b << endl;\n    return 0;\n}`, defaultInput: "8 99" },
+
   { id: 202, langId: 54, title: "C++ Practical 2: Prime Number Check", desc: "Determines if a given number is prime.", code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 29;\n    if (cin >> n) {}\n    bool isPrime = n > 1;\n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) { isPrime = false; break; }\n    }\n    cout << n << (isPrime ? " is Prime" : " is Not Prime") << endl;\n    return 0;\n}`, defaultInput: "17" },
+
   { id: 203, langId: 54, title: "C++ Practical 3: Fibonacci Series", desc: "Generates the first N terms of Fibonacci.", code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 8;\n    if (cin >> n) {}\n    int t1 = 0, t2 = 1, nextTerm = 0;\n    cout << "Fibonacci Series: ";\n    for (int i = 1; i <= n; ++i) {\n        cout << t1 << " ";\n        nextTerm = t1 + t2;\n        t1 = t2;\n        t2 = nextTerm;\n    }\n    cout << endl;\n    return 0;\n}`, defaultInput: "10" },
+
   { id: 204, langId: 54, title: "C++ Practical 4: Class & Object Basics", desc: "Demonstrates class creation and object instantiation.", code: `#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Student {\npublic:\n    string name;\n    int age;\n    void display() {\n        cout << "Student: " << name << ", Age: " << age << endl;\n    }\n};\n\nint main() {\n    Student s;\n    s.name = "Alex"; s.age = 20;\n    if (cin >> s.name >> s.age) {}\n    s.display();\n    return 0;\n}`, defaultInput: "Rahul 22" },
+
   { id: 205, langId: 54, title: "C++ Practical 5: Array Sum & Average", desc: "Calculates total sum and average of input numbers.", code: `#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n = 5;\n    if (cin >> n) {}\n    double sum = 0, val;\n    for(int i=0; i<n; i++) {\n        if(cin >> val) sum += val;\n        else sum += (i + 1) * 10;\n    }\n    cout << "Sum: " << sum << " | Average: " << (sum / n) << endl;\n    return 0;\n}`, defaultInput: "5 10 20 30 40 50" },
 
-  // JAVA PRACTICALS
   { id: 301, langId: 62, title: "Java Practical 1: Palindrome Check", desc: "Checks if a word or integer is a palindrome.", code: `import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String str = sc.hasNext() ? sc.next() : "madam";\n        String rev = new StringBuilder(str).reverse().toString();\n        System.out.println(str + (str.equalsIgnoreCase(rev) ? " is a Palindrome" : " is Not a Palindrome"));\n    }\n}`, defaultInput: "racecar" },
+
   { id: 302, langId: 62, title: "Java Practical 2: Linear Search", desc: "Searches for an element in an array.", code: `import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        int[] arr = {10, 25, 30, 45, 50};\n        int target = 30;\n        System.out.println("Searching for key: " + target);\n        boolean found = false;\n        for(int i=0; i<arr.length; i++) {\n            if(arr[i] == target) {\n                System.out.println("Element found at index: " + i);\n                found = true; break;\n            }\n        }\n        if(!found) System.out.println("Element not found.");\n    }\n}`, defaultInput: "" },
+
   { id: 303, langId: 62, title: "Java Practical 3: Inheritance Demo", desc: "Simple object-oriented single inheritance.", code: `class Animal {\n    void eat() { System.out.println("This animal eats food."); }\n}\nclass Dog extends Animal {\n    void bark() { System.out.println("The dog barks!"); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Dog d = new Dog();\n        d.eat();\n        d.bark();\n    }\n}`, defaultInput: "" },
+
   { id: 304, langId: 62, title: "Java Practical 4: Exception Handling", desc: "Demonstrates try-catch error handling block.", code: `public class Main {\n    public static void main(String[] args) {\n        try {\n            int a = 10, b = 0;\n            int result = a / b;\n            System.out.println("Result: " + result);\n        } catch (ArithmeticException e) {\n            System.out.println("Caught Exception: Division by zero is not allowed.");\n        } finally {\n            System.out.println("Execution finished safely.");\n        }\n    }\n}`, defaultInput: "" },
+
   { id: 305, langId: 62, title: "Java Practical 5: Matrix Multiplication", desc: "Performs 2x2 matrix multiplication.", code: `public class Main {\n    public static void main(String[] args) {\n        int[][] a = {{1, 2}, {3, 4}};\n        int[][] b = {{2, 0}, {1, 2}};\n        int[][] c = new int[2][2];\n        System.out.println("Product Matrix:");\n        for (int i = 0; i < 2; i++) {\n            for (int j = 0; j < 2; j++) {\n                c[i][j] = 0;\n                for (int k = 0; k < 2; k++) {\n                    c[i][j] += a[i][k] * b[k][j];\n                }\n                System.out.print(c[i][j] + " ");\n            }\n            System.out.println();\n        }\n    }\n}`, defaultInput: "" },
 
-  // PYTHON PRACTICALS
   { id: 401, langId: 71, title: "Python Practical 1: List Operations", desc: "Creates and manipulates a standard Python list.", code: `fruits = ["apple", "banana", "cherry"]\nfruits.append("date")\nprint("Fruits list:", fruits)\nprint("Sorted:", sorted(fruits))\nprint("Total count:", len(fruits))`, defaultInput: "" },
+
   { id: 402, langId: 71, title: "Python Practical 2: Dictionary Lookup", desc: "Stores key-value data in a dictionary.", code: `student = {"name": "Priya", "roll": 101, "course": "CS"}\nprint(f"Student Name: {student['name']}")\nprint(f"Course: {student.get('course')}")\nstudent["grade"] = "A+"\nprint("Full Record:", student)`, defaultInput: "" },
+
   { id: 403, langId: 71, title: "Python Practical 3: Multiplication Table", desc: "Prints multiplication table of a number.", code: `import sys\n\ntry:\n    num = int(sys.stdin.read().strip())\nexcept Exception:\n    num = 5\n\nprint(f"--- Multiplication Table for {num} ---")\nfor i in range(1, 11):\n    print(f"{num} x {i} = {num * i}")`, defaultInput: "7" },
+
   { id: 404, langId: 71, title: "Python Practical 4: Function & Lambda", desc: "Uses custom functions and lambda map.", code: `def square(x):\n    return x ** 2\n\nnumbers = [1, 2, 3, 4, 5]\nsquares = list(map(lambda x: square(x), numbers))\nprint("Original:", numbers)\nprint("Squares: ", squares)`, defaultInput: "" },
+
   { id: 405, langId: 71, title: "Python Practical 5: File Operations Mock", desc: "Demonstrates string parsing and formatting.", code: `raw_data = "John,25,Engineer\\nSara,30,Doctor\\nMike,22,Student"\nlines = raw_data.strip().split('\\n')\nprint("Parsed User Records:")\nfor line in lines:\n    name, age, role = line.split(',')\n    print(f"• {name} ({age} yrs) -> {role}")`, defaultInput: "" }
 ];
 
-const LANG_NAMES = {50:"C", 54:"C++", 62:"Java", 71:"Python"};
-const FILE_NAMES = {50:"main.c", 54:"main.cpp", 62:"Main.java", 71:"main.py"};
+const LANG_NAMES = {
+  50: "C",
+  54: "C++",
+  62: "Java",
+  71: "Python"
+};
+
+const FILE_NAMES = {
+  50: "main.c",
+  54: "main.cpp",
+  62: "Main.java",
+  71: "main.py"
+};
 
 let testCases = [];
-let executionHistory = JSON.parse(sessionStorage.getItem("virtualLabHistory") || "[]");
+let executionHistory =
+  JSON.parse(sessionStorage.getItem("virtualLabHistory") || "[]");
 
 const codearea = document.getElementById("codearea");
 const gutter = document.getElementById("gutter");
@@ -547,20 +1578,28 @@ const langSelect = document.getElementById("langSelect");
 const runBtn = document.getElementById("runBtn");
 const statusBadge = document.getElementById("statusBadge");
 
-// User Login Handling
+/* User Login Handling */
 document.getElementById("loginForm").addEventListener("submit", (e) => {
   e.preventDefault();
+
   const name = document.getElementById("userNameInput").value;
   const role = document.getElementById("userRoleInput").value;
-  
-  document.getElementById("userProfileDisplay").textContent = `${name} (${role})`;
-  document.getElementById("userAvatar").textContent = role === "Professor" ? "👨‍🏫" : "🧑";
+
+  document.getElementById("userProfileDisplay").textContent =
+    `${name} (${role})`;
+
+  document.getElementById("userAvatar").textContent =
+    role === "Professor" ? "👨‍🏫" : "🧑";
+
   document.getElementById("loginModal").style.display = "none";
+
   toast(`Welcome ${name}! logged in as ${role}`);
 });
 
-// Navigation Handling
-const navItems = document.querySelectorAll(".sidebar .navitem[data-target]");
+/* Navigation Handling */
+const navItems =
+  document.querySelectorAll(".sidebar .navitem[data-target]");
+
 navItems.forEach(btn => {
   btn.addEventListener("click", () => {
     const target = btn.getAttribute("data-target");
@@ -570,20 +1609,29 @@ navItems.forEach(btn => {
 
 function switchTab(targetId) {
   navItems.forEach(b => {
-    if(b.getAttribute("data-target") === targetId) b.classList.add("active");
-    else b.classList.remove("active");
+    if (b.getAttribute("data-target") === targetId)
+      b.classList.add("active");
+    else
+      b.classList.remove("active");
   });
 
   document.querySelectorAll(".view-section").forEach(sec => {
     sec.classList.remove("active");
   });
-  
+
   const targetSec = document.getElementById(targetId);
-  if (targetSec) targetSec.classList.add("active");
-  
-  if(targetId === "savedView") renderSavedCodes();
-  if(targetId === "historyView") renderHistory();
-  if(targetId === "practicalsView") renderPracticals();
+
+  if (targetSec)
+    targetSec.classList.add("active");
+
+  if (targetId === "savedView")
+    renderSavedCodes();
+
+  if (targetId === "historyView")
+    renderHistory();
+
+  if (targetId === "practicalsView")
+    renderPracticals();
 }
 
 document.getElementById("logoutBtn").addEventListener("click", () => {
@@ -591,355 +1639,818 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
   toast("Logged out successfully");
 });
 
-// Theme Switching
+/* Theme Switching */
 const themeToggle = document.getElementById("themeToggle");
+
 themeToggle.addEventListener("click", () => {
   document.body.classList.toggle("light-mode");
-  const isLight = document.body.classList.contains("light-mode");
-  themeToggle.textContent = isLight ? "☀️" : "🌙";
-  toast(`Switched to ${isLight ? "Light" : "Dark"} Mode`);
+
+  const isLight =
+    document.body.classList.contains("light-mode");
+
+  themeToggle.textContent =
+    isLight ? "☀️" : "🌙";
+
+  toast(
+    `Switched to ${isLight ? "Light" : "Dark"} Mode`
+  );
 });
 
 function toast(msg) {
   const t = document.createElement("div");
+
   t.className = "toast";
   t.textContent = msg;
+
   document.getElementById("toastWrap").appendChild(t);
+
   setTimeout(() => t.remove(), 2800);
 }
 
 function syncGutter() {
-  const lines = codearea.value.split("\n").length;
+  const lines =
+    codearea.value.split("\n").length;
+
   let html = "";
-  for (let i = 1; i <= lines; i++) html += i + "\n";
+
+  for (let i = 1; i <= lines; i++)
+    html += i + "\n";
+
   gutter.textContent = html;
   gutter.scrollTop = codearea.scrollTop;
 }
 
-codearea.addEventListener("input", syncGutter);
-codearea.addEventListener("scroll", () => gutter.scrollTop = codearea.scrollTop);
+codearea.addEventListener(
+  "input",
+  syncGutter
+);
+
+codearea.addEventListener(
+  "scroll",
+  () => gutter.scrollTop = codearea.scrollTop
+);
 
 langSelect.addEventListener("change", () => {
   const id = langSelect.value;
+
   codearea.value = DEFAULT_CODE[id];
-  document.getElementById("fileTabName").textContent = FILE_NAMES[id];
-  document.getElementById("langLabel").textContent = LANG_NAMES[id];
+
+  document.getElementById("fileTabName").textContent =
+    FILE_NAMES[id];
+
+  document.getElementById("langLabel").textContent =
+    LANG_NAMES[id];
+
   syncGutter();
 });
 
 function copyText(id) {
-  const text = document.getElementById(id).innerText;
-  navigator.clipboard.writeText(text).then(() => toast("Copied!"));
+  const text =
+    document.getElementById(id).innerText;
+
+  navigator.clipboard
+    .writeText(text)
+    .then(() => toast("Copied!"));
 }
 
 function clearConsole(id) {
-  document.getElementById(id).innerHTML = `<span class="placeholder-empty">Cleared.</span>`;
+  document.getElementById(id).innerHTML =
+    `<span class="placeholder-empty">Cleared.</span>`;
 }
 
 function renderTestCases() {
-  const list = document.getElementById("testcaseList");
+  const list =
+    document.getElementById("testcaseList");
+
   if (!testCases.length) {
-    list.innerHTML = `<div style="color:var(--text-faint);font-size:13px">No test cases</div>`;
+    list.innerHTML =
+      `<div style="color:var(--text-faint);font-size:13px">No test cases</div>`;
     return;
   }
+
   list.innerHTML = testCases.map((tc, i) => `
     <div class="testcase">
       <div class="testcase-top">
-        <strong>Test Case ${i+1}</strong>
-        <span class="badge ${tc.status === 'Passed' ? 'success' : tc.status === 'Failed' ? 'error' : 'ready'}">${tc.status || 'Ready'}</span>
+        <strong>Test Case ${i + 1}</strong>
+
+        <span class="badge ${
+          tc.status === "Passed"
+            ? "success"
+            : tc.status === "Failed"
+              ? "error"
+              : "ready"
+        }">
+          ${tc.status || "Ready"}
+        </span>
       </div>
-      <div style="font-size:12px;color:var(--text-faint)">
+
+      <div style="font-size:12px;color:var(--text-faint);overflow-wrap:anywhere">
         Input: ${tc.input} | Expected: ${tc.expected}
       </div>
     </div>
   `).join("");
 }
 
-async function runSingleSubmission(source_code, language_id, stdin) {
-  const createRes = await fetch(`${API_URL}/submissions?base64_encoded=false&wait=false`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ source_code, language_id, stdin })
-  });
+async function runSingleSubmission(
+  source_code,
+  language_id,
+  stdin
+) {
+  const createRes =
+    await fetch(
+      `${API_URL}/submissions?base64_encoded=false&wait=false`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          source_code,
+          language_id,
+          stdin
+        })
+      }
+    );
 
-  if (!createRes.ok) throw new Error("Failed to submit code");
+  if (!createRes.ok)
+    throw new Error("Failed to submit code");
 
-  const { token } = await createRes.json();
+  const { token } =
+    await createRes.json();
+
   let result = null;
+
   for (let i = 0; i < 25; i++) {
-    await new Promise(r => setTimeout(r, 1200));
-    const res = await fetch(`${API_URL}/submissions/${token}?base64_encoded=false`);
+
+    await new Promise(
+      r => setTimeout(r, 1200)
+    );
+
+    const res =
+      await fetch(
+        `${API_URL}/submissions/${token}?base64_encoded=false`
+      );
+
     result = await res.json();
-    if (result.status && result.status.id > 2) break;
+
+    if (
+      result.status &&
+      result.status.id > 2
+    )
+      break;
   }
+
   return result;
 }
 
 function validateOutput(actual, expected) {
-  if (!actual && !expected) return true;
-  if (!actual) return false;
 
-  const cleanActual = actual.trim().replace(/\r\n/g, "\n");
-  const cleanExpected = String(expected).trim().replace(/\r\n/g, "\n");
+  if (!actual && !expected)
+    return true;
 
-  if (cleanActual === cleanExpected) return true;
-  if (cleanActual.includes(cleanExpected)) return true;
-  return cleanActual.replace(/\s+/g, ' ').includes(cleanExpected.replace(/\s+/g, ' '));
+  if (!actual)
+    return false;
+
+  const cleanActual =
+    actual.trim().replace(/\r\n/g, "\n");
+
+  const cleanExpected =
+    String(expected)
+      .trim()
+      .replace(/\r\n/g, "\n");
+
+  if (cleanActual === cleanExpected)
+    return true;
+
+  if (cleanActual.includes(cleanExpected))
+    return true;
+
+  return cleanActual
+    .replace(/\s+/g, " ")
+    .includes(
+      cleanExpected.replace(/\s+/g, " ")
+    );
 }
 
-// History Management
-function recordHistory(langId, statusDesc, isSuccess, execTime) {
+/* History Management */
+function recordHistory(
+  langId,
+  statusDesc,
+  isSuccess,
+  execTime
+) {
   const newEntry = {
     id: Date.now(),
     lang: LANG_NAMES[langId],
     status: statusDesc,
     success: isSuccess,
-    time: execTime ? execTime + " s" : "N/A",
-    timestamp: new Date().toLocaleTimeString()
+    time: execTime
+      ? execTime + " s"
+      : "N/A",
+    timestamp:
+      new Date().toLocaleTimeString()
   };
+
   executionHistory.unshift(newEntry);
-  if(executionHistory.length > 5) executionHistory.pop();
-  sessionStorage.setItem("virtualLabHistory", JSON.stringify(executionHistory));
+
+  if (executionHistory.length > 5)
+    executionHistory.pop();
+
+  sessionStorage.setItem(
+    "virtualLabHistory",
+    JSON.stringify(executionHistory)
+  );
 }
 
 function renderHistory() {
-  const container = document.getElementById("historyList");
-  if(!executionHistory.length) {
-    container.innerHTML = `<div style="color:var(--text-faint); font-style:italic;">No execution history recorded yet.</div>`;
+  const container =
+    document.getElementById("historyList");
+
+  if (!executionHistory.length) {
+    container.innerHTML =
+      `<div style="color:var(--text-faint);font-style:italic;">
+        No execution history recorded yet.
+      </div>`;
+
     return;
   }
-  container.innerHTML = executionHistory.map((item) => `
-    <div class="list-item-box">
-      <div>
-        <strong>${item.lang} Program Execution</strong>
-        <div style="font-size:12px; color:var(--text-faint); margin-top:3px;">
-          Time Executed: ${item.timestamp} | Duration: ${item.time}
+
+  container.innerHTML =
+    executionHistory.map(item => `
+      <div class="list-item-box">
+
+        <div>
+          <strong>${item.lang} Program Execution</strong>
+
+          <div style="font-size:12px;color:var(--text-faint);margin-top:3px;">
+            Time Executed: ${item.timestamp}
+            | Duration: ${item.time}
+          </div>
         </div>
+
+        <span class="badge ${
+          item.success
+            ? "success"
+            : "error"
+        }">
+          ${item.status}
+        </span>
+
       </div>
-      <span class="badge ${item.success ? 'success' : 'error'}">${item.status}</span>
-    </div>
-  `).join("");
+    `).join("");
 }
 
 function clearHistory() {
   executionHistory = [];
-  sessionStorage.removeItem("virtualLabHistory");
+
+  sessionStorage.removeItem(
+    "virtualLabHistory"
+  );
+
   renderHistory();
+
   toast("Execution history cleared");
 }
 
 async function runCode() {
-  const source = codearea.value;
-  const language_id = parseInt(langSelect.value);
-  const stdin = document.getElementById("stdinarea").value;
+
+  const source =
+    codearea.value;
+
+  const language_id =
+    parseInt(langSelect.value);
+
+  const stdin =
+    document.getElementById("stdinarea").value;
 
   runBtn.disabled = true;
-  statusBadge.className = "badge running";
-  statusBadge.textContent = "Running...";
-  document.getElementById("outputBody").innerHTML = `<span class="placeholder-empty">Running...</span>`;
-  document.getElementById("errorBody").innerHTML = `<span class="placeholder-empty">Waiting...</span>`;
+
+  statusBadge.className =
+    "badge running";
+
+  statusBadge.textContent =
+    "Running...";
+
+  document.getElementById("outputBody").innerHTML =
+    `<span class="placeholder-empty">Running...</span>`;
+
+  document.getElementById("errorBody").innerHTML =
+    `<span class="placeholder-empty">Waiting...</span>`;
 
   try {
-    const result = await runSingleSubmission(source, language_id, stdin);
-    const isSuccess = result.status?.id === 3;
-    const isCompilationError = result.status?.id === 6;
 
-    document.getElementById("outputBody").textContent = result.stdout || "(no output)";
-    document.getElementById("errorBody").textContent = 
-      (result.compile_output || "") + (result.stderr || "") || "No errors";
+    const result =
+      await runSingleSubmission(
+        source,
+        language_id,
+        stdin
+      );
 
-    statusBadge.className = isSuccess ? "badge success" : "badge error";
-    statusBadge.textContent = result.status?.description || "Finished";
+    const isSuccess =
+      result.status?.id === 3;
 
-    document.getElementById("execTime").textContent = result.time ? result.time + " s" : "–";
-    document.getElementById("execMem").textContent = result.memory ? (result.memory/1024).toFixed(1) + " MB" : "–";
-    document.getElementById("execExit").textContent = result.exit_code ?? "–";
-    document.getElementById("outputStatus").textContent = isSuccess ? "Success" : "Failed";
+    const isCompilationError =
+      result.status?.id === 6;
 
-    recordHistory(language_id, result.status?.description || "Finished", isSuccess, result.time);
+    document.getElementById("outputBody").textContent =
+      result.stdout || "(no output)";
+
+    document.getElementById("errorBody").textContent =
+      (result.compile_output || "") +
+      (result.stderr || "") ||
+      "No errors";
+
+    statusBadge.className =
+      isSuccess
+        ? "badge success"
+        : "badge error";
+
+    statusBadge.textContent =
+      result.status?.description ||
+      "Finished";
+
+    document.getElementById("execTime").textContent =
+      result.time
+        ? result.time + " s"
+        : "–";
+
+    document.getElementById("execMem").textContent =
+      result.memory
+        ? (result.memory / 1024).toFixed(1) + " MB"
+        : "–";
+
+    document.getElementById("execExit").textContent =
+      result.exit_code ?? "–";
+
+    document.getElementById("outputStatus").textContent =
+      isSuccess
+        ? "Success"
+        : "Failed";
+
+    recordHistory(
+      language_id,
+      result.status?.description ||
+        "Finished",
+      isSuccess,
+      result.time
+    );
 
     if (isCompilationError) {
-      testCases.forEach(tc => { tc.status = "Failed"; });
+
+      testCases.forEach(tc => {
+        tc.status = "Failed";
+      });
+
       renderTestCases();
+
     } else if (testCases.length > 0) {
+
       for (let tc of testCases) {
+
         try {
-          const tcResult = await runSingleSubmission(source, language_id, tc.input);
-          const actualOutput = tcResult.stdout || "";
-          
-          if (tcResult.status?.id === 3 && validateOutput(actualOutput, tc.expected)) {
+
+          const tcResult =
+            await runSingleSubmission(
+              source,
+              language_id,
+              tc.input
+            );
+
+          const actualOutput =
+            tcResult.stdout || "";
+
+          if (
+            tcResult.status?.id === 3 &&
+            validateOutput(
+              actualOutput,
+              tc.expected
+            )
+          ) {
             tc.status = "Passed";
           } else {
             tc.status = "Failed";
           }
+
         } catch (e) {
           tc.status = "Failed";
         }
+
         renderTestCases();
       }
     }
 
   } catch (err) {
-    document.getElementById("errorBody").textContent = "Error: " + err.message;
-    statusBadge.className = "badge error";
-    statusBadge.textContent = "Error";
-    recordHistory(language_id, "Execution Error", false, null);
-    testCases.forEach(tc => { tc.status = "Failed"; });
+
+    document.getElementById("errorBody").textContent =
+      "Error: " + err.message;
+
+    statusBadge.className =
+      "badge error";
+
+    statusBadge.textContent =
+      "Error";
+
+    recordHistory(
+      language_id,
+      "Execution Error",
+      false,
+      null
+    );
+
+    testCases.forEach(tc => {
+      tc.status = "Failed";
+    });
+
     renderTestCases();
+
     toast("Something went wrong");
   }
 
   runBtn.disabled = false;
 }
 
-runBtn.addEventListener("click", runCode);
-document.getElementById("compileBtn").addEventListener("click", runCode);
-document.getElementById("clearBtn").addEventListener("click", () => {
-  document.getElementById("outputBody").innerHTML = `<span class="placeholder-empty">Output will appear here…</span>`;
-  document.getElementById("errorBody").innerHTML = `<span class="placeholder-empty">No errors yet.</span>`;
-  statusBadge.className = "badge ready";
-  statusBadge.textContent = "Ready";
-});
+runBtn.addEventListener(
+  "click",
+  runCode
+);
 
-// Saved Codes Management (Browser localStorage)
+document.getElementById(
+  "compileBtn"
+).addEventListener(
+  "click",
+  runCode
+);
+
+document.getElementById(
+  "clearBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    document.getElementById(
+      "outputBody"
+    ).innerHTML =
+      `<span class="placeholder-empty">Output will appear here…</span>`;
+
+    document.getElementById(
+      "errorBody"
+    ).innerHTML =
+      `<span class="placeholder-empty">No errors yet.</span>`;
+
+    statusBadge.className =
+      "badge ready";
+
+    statusBadge.textContent =
+      "Ready";
+  }
+);
+
+/* Saved Codes Management */
 function getSavedCodes() {
-  return JSON.parse(localStorage.getItem("virtualLabSavedCodes") || "[]");
+  return JSON.parse(
+    localStorage.getItem(
+      "virtualLabSavedCodes"
+    ) || "[]"
+  );
 }
 
-document.getElementById("saveBtn").addEventListener("click", () => {
-  const code = codearea.value;
-  const langId = langSelect.value;
-  const title = prompt("Enter a title for this snippet:", `${LANG_NAMES[langId]} Program ${new Date().toLocaleTimeString()}`);
-  
-  if (!title) return;
+document.getElementById(
+  "saveBtn"
+).addEventListener(
+  "click",
+  () => {
 
-  const savedList = getSavedCodes();
-  savedList.unshift({
-    id: Date.now(),
-    title,
-    langId,
-    langName: LANG_NAMES[langId],
-    code,
-    date: new Date().toLocaleDateString()
-  });
+    const code =
+      codearea.value;
 
-  localStorage.setItem("virtualLabSavedCodes", JSON.stringify(savedList));
-  toast("Code saved successfully!");
-});
+    const langId =
+      langSelect.value;
+
+    const title =
+      prompt(
+        "Enter a title for this snippet:",
+        `${LANG_NAMES[langId]} Program ${new Date().toLocaleTimeString()}`
+      );
+
+    if (!title)
+      return;
+
+    const savedList =
+      getSavedCodes();
+
+    savedList.unshift({
+      id: Date.now(),
+      title,
+      langId,
+      langName: LANG_NAMES[langId],
+      code,
+      date:
+        new Date().toLocaleDateString()
+    });
+
+    localStorage.setItem(
+      "virtualLabSavedCodes",
+      JSON.stringify(savedList)
+    );
+
+    toast("Code saved successfully!");
+  }
+);
 
 function renderSavedCodes() {
-  const container = document.getElementById("savedList");
-  const savedList = getSavedCodes();
-  if(!savedList.length) {
-    container.innerHTML = `<div style="color:var(--text-faint); font-style:italic;">No saved codes found. Click "Save Code" in the editor to keep snippets locally.</div>`;
+
+  const container =
+    document.getElementById("savedList");
+
+  const savedList =
+    getSavedCodes();
+
+  if (!savedList.length) {
+
+    container.innerHTML =
+      `<div style="color:var(--text-faint);font-style:italic;">
+        No saved codes found. Click "Save Code" in the editor to keep snippets locally.
+      </div>`;
+
     return;
   }
-  container.innerHTML = savedList.map(item => `
-    <div class="list-item-box">
-      <div>
-        <strong>${item.title}</strong>
-        <div style="font-size:12px; color:var(--text-faint); margin-top:3px;">
-          Language: ${item.langName} · Saved on ${item.date}
+
+  container.innerHTML =
+    savedList.map(item => `
+      <div class="list-item-box">
+
+        <div>
+          <strong>${item.title}</strong>
+
+          <div style="font-size:12px;color:var(--text-faint);margin-top:3px;">
+            Language: ${item.langName}
+            · Saved on ${item.date}
+          </div>
         </div>
+
+        <div style="display:flex;gap:8px;">
+
+          <button
+            class="btn btn-save"
+            style="width:auto;margin:0;"
+            onclick="loadSavedCodeById(${item.id})"
+          >
+            Load
+          </button>
+
+          <button
+            class="btn btn-danger"
+            style="width:auto;margin:0;padding:6px 10px;"
+            onclick="deleteSavedCode(${item.id})"
+          >
+            🗑
+          </button>
+
+        </div>
+
       </div>
-      <div style="display:flex; gap:8px;">
-        <button class="btn btn-save" style="width:auto; margin:0;" onclick="loadSavedCodeById(${item.id})">Load</button>
-        <button class="btn btn-danger" style="width:auto; margin:0; padding:6px 10px;" onclick="deleteSavedCode(${item.id})">🗑</button>
-      </div>
-    </div>
-  `).join("");
+    `).join("");
 }
 
 function loadSavedCodeById(id) {
-  const savedList = getSavedCodes();
-  const item = savedList.find(x => x.id === id);
-  if(item) {
-    langSelect.value = item.langId;
-    codearea.value = item.code;
-    document.getElementById("fileTabName").textContent = FILE_NAMES[item.langId];
-    document.getElementById("langLabel").textContent = LANG_NAMES[item.langId];
+
+  const savedList =
+    getSavedCodes();
+
+  const item =
+    savedList.find(
+      x => x.id === id
+    );
+
+  if (item) {
+
+    langSelect.value =
+      item.langId;
+
+    codearea.value =
+      item.code;
+
+    document.getElementById(
+      "fileTabName"
+    ).textContent =
+      FILE_NAMES[item.langId];
+
+    document.getElementById(
+      "langLabel"
+    ).textContent =
+      LANG_NAMES[item.langId];
+
     syncGutter();
-    switchTab('editorView');
-    toast(`Loaded "${item.title}" into editor`);
+
+    switchTab(
+      "editorView"
+    );
+
+    toast(
+      `Loaded "${item.title}" into editor`
+    );
   }
 }
 
 function deleteSavedCode(id) {
-  let savedList = getSavedCodes();
-  savedList = savedList.filter(x => x.id !== id);
-  localStorage.setItem("virtualLabSavedCodes", JSON.stringify(savedList));
+
+  let savedList =
+    getSavedCodes();
+
+  savedList =
+    savedList.filter(
+      x => x.id !== id
+    );
+
+  localStorage.setItem(
+    "virtualLabSavedCodes",
+    JSON.stringify(savedList)
+  );
+
   renderSavedCodes();
+
   toast("Snippet deleted.");
 }
 
-// Practicals Management
-let currentPracticalFilter = 'all';
+/* Practicals Management */
+let currentPracticalFilter = "all";
 
-function filterPracticals(langId, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentPracticalFilter = langId;
+function filterPracticals(
+  langId,
+  btn
+) {
+
+  document
+    .querySelectorAll(".filter-btn")
+    .forEach(
+      b => b.classList.remove("active")
+    );
+
+  btn.classList.add("active");
+
+  currentPracticalFilter =
+    langId;
+
   renderPracticals();
 }
 
 function renderPracticals() {
-  const container = document.getElementById("practicalsList");
-  const filtered = currentPracticalFilter === 'all' 
-    ? PRACTICALS_DATA 
-    : PRACTICALS_DATA.filter(p => String(p.langId) === String(currentPracticalFilter));
 
-  container.innerHTML = filtered.map(p => `
-    <div class="list-item-box">
-      <div>
-        <strong style="font-size:15px;">${p.title}</strong>
-        <div style="font-size:12.5px; color:var(--text-dim); margin-top:3px;">${p.desc}</div>
-        <div style="font-size:11.5px; color:var(--accent-1); margin-top:4px; font-weight:600;">Language: ${LANG_NAMES[p.langId]}</div>
+  const container =
+    document.getElementById(
+      "practicalsList"
+    );
+
+  const filtered =
+    currentPracticalFilter === "all"
+      ? PRACTICALS_DATA
+      : PRACTICALS_DATA.filter(
+          p =>
+            String(p.langId) ===
+            String(currentPracticalFilter)
+        );
+
+  container.innerHTML =
+    filtered.map(p => `
+      <div class="list-item-box">
+
+        <div>
+          <strong style="font-size:15px;">
+            ${p.title}
+          </strong>
+
+          <div style="font-size:12.5px;color:var(--text-dim);margin-top:3px;">
+            ${p.desc}
+          </div>
+
+          <div style="font-size:11.5px;color:var(--accent-1);margin-top:4px;font-weight:600;">
+            Language: ${LANG_NAMES[p.langId]}
+          </div>
+        </div>
+
+        <button
+          class="btn btn-run"
+          style="width:auto;margin:0;white-space:nowrap;"
+          onclick="startLab(${p.id})"
+        >
+          ▶ Start Lab
+        </button>
+
       </div>
-      <button class="btn btn-run" style="width:auto; margin:0; white-space:nowrap;" onclick="startLab(${p.id})">▶ Start Lab</button>
-    </div>
-  `).join("");
+    `).join("");
 }
 
 function startLab(practicalId) {
-  const practical = PRACTICALS_DATA.find(p => p.id === practicalId);
+
+  const practical =
+    PRACTICALS_DATA.find(
+      p => p.id === practicalId
+    );
+
   if (practical) {
-    langSelect.value = practical.langId;
-    codearea.value = practical.code;
-    document.getElementById("fileTabName").textContent = FILE_NAMES[practical.langId];
-    document.getElementById("langLabel").textContent = LANG_NAMES[practical.langId];
-    document.getElementById("stdinarea").value = practical.defaultInput || "";
+
+    langSelect.value =
+      practical.langId;
+
+    codearea.value =
+      practical.code;
+
+    document.getElementById(
+      "fileTabName"
+    ).textContent =
+      FILE_NAMES[practical.langId];
+
+    document.getElementById(
+      "langLabel"
+    ).textContent =
+      LANG_NAMES[practical.langId];
+
+    document.getElementById(
+      "stdinarea"
+    ).value =
+      practical.defaultInput || "";
+
     syncGutter();
-    switchTab('editorView');
-    toast(`Loaded: ${practical.title}`);
+
+    switchTab(
+      "editorView"
+    );
+
+    toast(
+      `Loaded: ${practical.title}`
+    );
   }
 }
 
-document.getElementById("fileInput").addEventListener("change", e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    codearea.value = ev.target.result;
-    syncGutter();
-    toast("File loaded: " + file.name);
-  };
-  reader.readAsText(file);
-});
+document.getElementById(
+  "fileInput"
+).addEventListener(
+  "change",
+  e => {
 
-document.getElementById("addTcBtn").addEventListener("click", () => {
-  const input = prompt("Test case input:");
-  const expected = prompt("Expected output:");
-  if (expected !== null) {
-    testCases.push({ id: Date.now(), input: input || "", expected, status: "Ready" });
-    renderTestCases();
+    const file =
+      e.target.files[0];
+
+    if (!file)
+      return;
+
+    const reader =
+      new FileReader();
+
+    reader.onload =
+      ev => {
+
+        codearea.value =
+          ev.target.result;
+
+        syncGutter();
+
+        toast(
+          "File loaded: " +
+          file.name
+        );
+      };
+
+    reader.readAsText(file);
   }
-});
+);
 
-// Initial Setup
-codearea.value = DEFAULT_CODE[50];
+document.getElementById(
+  "addTcBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    const input =
+      prompt("Test case input:");
+
+    const expected =
+      prompt("Expected output:");
+
+    if (expected !== null) {
+
+      testCases.push({
+        id: Date.now(),
+        input: input || "",
+        expected,
+        status: "Ready"
+      });
+
+      renderTestCases();
+    }
+  }
+);
+
+/* Initial Setup */
+codearea.value =
+  DEFAULT_CODE[50];
+
 syncGutter();
+
 renderTestCases();
+
 renderHistory();
 </script>
+
 </body>
 </html>
